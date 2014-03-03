@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{a818dbc8-7b1f-4259-bde2-0029c0fcbde7}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{2e7364b3-0573-4fa5-b428-ed27e6597a23}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{7eb7e7ff-7b0a-437f-9ab4-3e88f0d9d956}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;jpg;jpeg;jpe;manifest</Extensions>
+    </Filter>
+    <Filter Include="pugixml">
+      <UniqueIdentifier>{43decd45-7905-4e75-9ae4-404aa076744c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controls">
+      <UniqueIdentifier>{22152cb4-2a66-4414-87f6-2ec3213742c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Domain">
+      <UniqueIdentifier>{6207f749-cf71-443e-9d2f-f62653fee4a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{a329d571-1ea7-410c-b683-1486fdbfa247}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VLC">
+      <UniqueIdentifier>{6241e410-bcbe-4fd6-b6c1-1f9c8d7b07cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controller">
+      <UniqueIdentifier>{6830f512-9139-475f-bbba-9227ca23f91b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZaoQiBu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pugixml.cpp">
+      <Filter>pugixml</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLCWrapper.cpp">
+      <Filter>VLC</Filter>
+    </ClCompile>
+    <ClCompile Include="VLCWrapperImpl.cpp">
+      <Filter>VLC</Filter>
+    </ClCompile>
+    <ClCompile Include="Course.cpp">
+      <Filter>Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="Courses.cpp">
+      <Filter>Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter.cpp">
+      <Filter>Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="CourseUtil.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="FileUtil.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Convert.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoPlayerDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CoursePlayerController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="CoursePlayer.cpp">
+      <Filter>Controls</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AboutDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pugixml.hpp">
+      <Filter>pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="pugiconfig.hpp">
+      <Filter>pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLCWrapper.h">
+      <Filter>VLC</Filter>
+    </ClInclude>
+    <ClInclude Include="VLCWrapperImpl.h">
+      <Filter>VLC</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageListBox.h">
+      <Filter>Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ThemedImage.h">
+      <Filter>Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageHelpers.h">
+      <Filter>Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Course.h">
+      <Filter>Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="Courses.h">
+      <Filter>Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="Chapter.h">
+      <Filter>Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="CourseUtil.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="FileUtil.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Convert.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="tstring.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoPlayerDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CoursePlayerController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="CoursePlayer.h">
+      <Filter>Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaState.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ZaoQiBu.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\toolbar.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\ZaoQiBu.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\logo.png" />
+    <Image Include="res\course_next.png" />
+    <Image Include="res\course_pause.png" />
+    <Image Include="res\course_play.png" />
+    <Image Include="res\course_prev.png" />
+    <Image Include="res\app_exit.png" />
+    <Image Include="res\full_screen.png" />
+    <Image Include="res\course_icon_carrot.png" />
+    <Image Include="res\snapshot.png" />
+    <Image Include="res\sound_off.png" />
+    <Image Include="res\sound_on.png" />
+  </ItemGroup>
+</Project>
