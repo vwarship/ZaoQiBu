@@ -42,9 +42,6 @@
     <ClCompile Include="pugixml.cpp">
       <Filter>pugixml</Filter>
     </ClCompile>
-    <ClCompile Include="Config.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="VLCWrapper.cpp">
       <Filter>VLC</Filter>
     </ClCompile>
@@ -78,6 +75,9 @@
     <ClCompile Include="CoursePlayer.cpp">
       <Filter>Controls</Filter>
     </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -97,9 +97,6 @@
     </ClInclude>
     <ClInclude Include="pugiconfig.hpp">
       <Filter>pugixml</Filter>
-    </ClInclude>
-    <ClInclude Include="Config.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VLCWrapper.h">
       <Filter>VLC</Filter>
@@ -147,6 +144,9 @@
       <Filter>Controls</Filter>
     </ClInclude>
     <ClInclude Include="MediaState.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
       <Filter>Util</Filter>
     </ClInclude>
   </ItemGroup>

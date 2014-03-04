@@ -11,51 +11,89 @@ using std::vector;
 
 using pugi::xml_node;
 using pugi::xpath_node;
+using pugi::xpath_node_set;
+using pugi::xml_attribute;
+using pugi::xml_document;
+using pugi::xml_parse_result;
 
-Config::Config()
+static PCTSTR CONFIG_FILENAME = _T("zaoqibu.xml");
+
+bool Config::Load()
 {
-}
+	m_courses.reset(new Courses);
 
-Config::~Config()
-{
-}
-
-bool Config::Load(const tstring &filename)
-{
-	const std::locale utf8_locale = std::locale(std::locale(), new std::codecvt_utf8<wchar_t>());
-	tifstream inFile(filename);
-	inFile.imbue(utf8_locale);
-	if (!inFile.is_open() || inFile.bad())
-		return false;
-
-	std::vector<tstring> courseFilenames;
-	while (!inFile.eof())
+	xml_document xml_doc;
+	xml_parse_result parseResult = xml_doc.load_file(CONFIG_FILENAME);
+	if (parseResult.status == pugi::status_ok)
 	{
-		tchar line[BUF_SIZE] = { _T('\0') };
-		inFile.getline(line, BUF_SIZE);
+		xpath_node node = xml_doc.select_single_node(_T("/ZaoQiBu/Courses"));
+		m_courses->SetLastPlayCourseIndex(node.node().attribute(_T("lastPlayCourseIndex")).as_int());
+		m_courses->SetVolume(node.node().attribute(_T("volume")).as_int());
 
-		const tstring filePath = FileUtil::GetFileFullPathNameWithCurrentDir(line);
-		if (!filePath.empty() && FileUtil::IsExistWithFile(filePath))
+		xpath_node_set node_set = xml_doc.select_nodes(_T("/ZaoQiBu/Courses/Course"));
+
+		std::vector<tstring> courseFilenames;
+		size_t node_size = node_set.size();
+		for (size_t i = 0; i<node_size; ++i)
 		{
-			courseFilenames.push_back(filePath);
+			xml_node node = node_set[i].node();
+
+			const tstring path = node.attribute(_T("path")).as_string();
+			xml_node nodePlayRecord = node.child(_T("PlayRecord"));
+			const int lastPlayChapterIndex = nodePlayRecord.attribute(_T("lastPlayChapterIndex")).as_int();
+			const int lastPlayChapterTime = nodePlayRecord.attribute(_T("lastPlayChapterTime")).as_int();
+
+			if (FileUtil::IsExistWithFile(path))
+			{
+				PlayRecord playRecord;
+				playRecord.SetLastPlayChapterIndex(lastPlayChapterIndex);
+				playRecord.SetLastPlayChapterTime(lastPlayChapterTime);
+
+				shared_ptr<Course> course = CourseUtil::Create(path);
+				course->SetPath(path);
+				course->SetPlayRecord(playRecord);
+
+				m_courses->AddCourse(course);
+			}
 		}
+
+		return true;
 	}
 
-	LoadCourses(courseFilenames);
-
-	return true;
+	return false;
 }
 
-void Config::LoadCourses(const std::vector<tstring> &courseFilenames)
+void Config::Save()
 {
-	for (const tstring filename : courseFilenames)
+	xml_document xml_doc;
+	xml_node root = xml_doc.append_child(_T("ZaoQiBu"));
+	xml_node coursesNode = root.append_child(_T("Courses"));
+
+	xml_attribute coursesAttr = coursesNode.append_attribute(_T("lastPlayCourseIndex"));
+	coursesAttr.set_value(m_courses->GetLastPlayCourseIndex());
+
+	coursesAttr = coursesNode.append_attribute(_T("volume"));
+	coursesAttr.set_value(m_courses->GetVolume());
+
+	for (size_t i = 0; i < m_courses->Count(); ++i)
 	{
-		Course course = CourseUtil::Create(filename);
-		m_courses.push_back(course);
+		shared_ptr<Course> course = m_courses->GetCourse(i);
+
+		xml_node courseNode = coursesNode.append_child(_T("Course"));
+		xml_attribute attr = courseNode.append_attribute(_T("path"));
+		attr.set_value(course->GetPath().data());
+
+		xml_node playRecordNode = courseNode.append_child(_T("PlayRecord"));
+		attr = playRecordNode.append_attribute(_T("lastPlayChapterIndex"));
+		attr.set_value(course->GetPlayRecord().GetLastPlayChapterIndex());
+		attr = playRecordNode.append_attribute(_T("lastPlayChapterTime"));
+		attr.set_value(course->GetPlayRecord().GetLastPlayChapterTime());
 	}
+
+	xml_doc.save_file(CONFIG_FILENAME);
 }
 
-const std::vector<Course>& Config::GetCourses() const
+shared_ptr<Courses> Config::GetCourses()
 {
 	return m_courses;
 }

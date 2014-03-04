@@ -4,22 +4,21 @@
 class Chapter
 {
 public:
-	Chapter(const tstring &filePath)
-		: m_filePath(filePath)
+	Chapter(const tstring &filePath, int startTime = 0)
+		: m_filePath(filePath), m_startTime(startTime)
 	{
 	}
 
-	const tstring& GetFilePath() const
-	{
-		return m_filePath;
-	}
+	const tstring& GetFilePath() const;
+	void SetFilePath(const tstring &filePath);
 
-	void SetFilePath(const tstring &filePath)
-	{
-		m_filePath = filePath;
-	}
+	int GetStartTime() const;
+	void SetStartTime(int startTime);
+
+	tstring GetTitle() const;
 
 private:
 	tstring m_filePath;
+	int m_startTime;
 
 };

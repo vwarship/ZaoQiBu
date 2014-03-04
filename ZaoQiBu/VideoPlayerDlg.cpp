@@ -9,7 +9,8 @@ CVideoPlayerDlg::CVideoPlayerDlg()
 
 void CVideoPlayerDlg::LoadConfig()
 {
-	m_config.Load(_T("zaoqibu.xml"));
+	m_config.Load();
+	m_playlist.SetCourses(m_config.GetCourses());
 }
 
 CVideoPlayerDlg::~CVideoPlayerDlg()
@@ -78,7 +79,7 @@ LRESULT CVideoPlayerDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /
 	m_courseList.SubclassWindow(GetDlgItem(IDC_COURSE_LIST));
 	m_courseList.SetItemHeight(0, 70);
 
-	m_courseImageList.Create(64, 64, TRUE | ILC_COLOR32, 1, 5);
+	m_courseImageList.Create(80, 64, TRUE | ILC_COLOR32, 1, 1);
 
 	m_courseChapterList.SubclassWindow(GetDlgItem(IDC_COURSE_ITEM_LIST));
 	m_courseChapterList.SetItemHeight(0, 30);
@@ -96,8 +97,7 @@ LRESULT CVideoPlayerDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /
 	//m_courseList.SetPreferences(cfg);
 
 	InsertCourses();
-	SetCurrentCourse(0);
-	SetCurrentChapter(0);
+	SetCurrentCourseIndex(m_playlist.GetLastPlayCourseIndex());
 
 	m_coursePlayer.SubclassWindow(GetDlgItem(IDC_COURSE_PLAYER));
 
@@ -110,12 +110,9 @@ LRESULT CVideoPlayerDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /
 	CreateBitmapButton(IDC_MUTE, { IDB_SOUND_ON, IDB_SOUND_OFF }, _T("音量"), m_bmpBtnMute);
 
 	m_hWndMediaTime = GetDlgItem(IDC_MEDIA_TIME);
-	m_iMediaTime = MEDIA_TIME_DEFAULT_VALUE;
 	m_sMediaCurrentTime = m_sMediaLength = _T("00:00:00");
 
 	m_hWndVolume = GetDlgItem(IDC_VOLUME);
-	m_iVolume = VOLUME_DEFAULT_VALUE;
-
 	InitVolume();
 
 	// register object for message filtering and idle updates
@@ -130,36 +127,26 @@ LRESULT CVideoPlayerDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /
 	return TRUE;
 }
 
-void CVideoPlayerDlg::InitVolume()
-{
-	SetSliderRange(m_hWndVolume, 0, 100);
-	SetSliderPos(m_hWndVolume, m_iVolume);
-}
-
 void CVideoPlayerDlg::InsertCourses()
 {
-	size_t i = 0;
-	const std::vector<Course>& courses = m_config.GetCourses();
-	for (const Course &course : courses)
+	const shared_ptr<Courses> courses = m_playlist.GetCourses();
+	for (size_t i = 0; i < courses->Count(); ++i)
 	{
-		const Course &course = courses[i];
+		const shared_ptr<Course> course = courses->GetCourse(i);
 		InsertCourse(course, i);
-
-		++i;
 	}
 }
 
-void CVideoPlayerDlg::InsertCourse(const Course &course, int iImage)
+void CVideoPlayerDlg::InsertCourse(const shared_ptr<Course> course, int iImage)
 {
-	AddCourseImage(course.GetIcon().data());
+	AddCourseImage(course->GetIcon().data());
 
 	ILBITEM item = { 0 };
-	item.mask = ILBIF_TEXT | ILBIF_IMAGE | ILBIF_SELIMAGE |
-		ILBIF_STYLE | ILBIF_FORMAT;
+	item.mask = ILBIF_TEXT | ILBIF_IMAGE | ILBIF_SELIMAGE | ILBIF_STYLE | ILBIF_FORMAT;
 	item.iItem = iImage;
 	item.iImage = iImage;
 	item.iSelImage = iImage;
-	item.pszText = const_cast<LPTSTR>(course.GetTitle().data());
+	item.pszText = const_cast<LPTSTR>(course->GetTitle().data());
 	item.style = ILBS_IMGLEFT | ILBS_SELROUND;
 	item.format = DT_LEFT;
 	m_courseList.InsertItem(&item);
@@ -172,84 +159,28 @@ void CVideoPlayerDlg::AddCourseImage(LPCTSTR pszImageFilename)
 	if (bitmap.IsNull())
 		bitmap = LoadBitmapWithPNG(IDB_COURSE_ICON_CARROT);
 
-	SIZE size = { 0 };
-	m_courseImageList.GetIconSize(size);
+	SIZE thumbnailSize = { 0 };
+	m_courseImageList.GetIconSize(thumbnailSize);
+	HBITMAP hBitmapThumbnail = CreateThumbnail(GetDC(), bitmap, thumbnailSize);
+	m_courseImageList.Add(hBitmapThumbnail);
 
-	////
-	SIZE srcSize = { 0 };
-	bitmap.GetSize(srcSize);
-
-	CDC srcDC;
-	srcDC.CreateCompatibleDC(GetDC());
-	HBITMAP hOldSrcBitmap = srcDC.SelectBitmap(bitmap);
-
-	CDC destDC;
-	destDC.CreateCompatibleDC(GetDC());
-	CBitmap destBitmap;
-	destBitmap.CreateCompatibleBitmap(GetDC(), size.cx, size.cy);
-	HBITMAP hOldDestBitmap = destDC.SelectBitmap(destBitmap);
-	destDC.SetStretchBltMode(HALFTONE);
-	CRect destRect = CalcDestImageRect(srcSize, size);
-	destDC.StretchBlt(destRect.left, destRect.top, destRect.Width(), destRect.Height(), srcDC, 0, 0, srcSize.cx, srcSize.cy, SRCCOPY);
-	destDC.SelectBitmap(hOldDestBitmap);
-
-	srcDC.SelectBitmap(hOldSrcBitmap);
-	/////
-
-	m_courseImageList.Add(destBitmap);
 	m_courseList.SetImageList(m_courseImageList.m_hImageList, ILSIL_NORMAL);
 	m_courseList.SetImageList(m_courseImageList.m_hImageList, ILSIL_SELECTED);
 }
 
-CRect CVideoPlayerDlg::CalcDestImageRect(SIZE srcSize, SIZE destSize) const
+HBITMAP CVideoPlayerDlg::LoadBitmapWithPNG(int nID)
 {
-	if (srcSize.cx >= destSize.cx || srcSize.cy >= destSize.cy)
-	{
-		// 计算出实际宽高和目标宽高的比率
-		double widthRatio = (double)srcSize.cx / destSize.cx;
-		double heightRatio = (double)srcSize.cy / destSize.cy;
-
-		// 选择宽和高中最小的比率作为inSampleSize的值，这样可以保证最终图片的宽和高
-		// 一定都会大于等于目标的宽和高。
-		double ratio = heightRatio > widthRatio ? heightRatio : widthRatio;
-
-		SIZE destRealSize = { (int)(srcSize.cx / ratio), (int)(srcSize.cy / ratio) };
-		CRect destRect = { 0, 0, destSize.cx, destSize.cy };
-		if (heightRatio > widthRatio) //调整宽度
-		{
-			int adjustSize = (destRect.Width() - destRealSize.cx) / 2;
-			destRect.DeflateRect(adjustSize, 0);
-		}
-		else
-		{
-			int adjustSize = (destRect.Height() - destRealSize.cy) / 2;
-			destRect.DeflateRect(0, adjustSize);
-		}
-
-		return destRect;
-	}
-
-	return CRect();
+	return AtlLoadGdiplusImage(nID, _T("PNG"));
 }
 
-int CVideoPlayerDlg::GetCurrentCourse() const
+int CVideoPlayerDlg::GetCurrentCourseIndex() const
 {
 	return m_courseList.GetCurSel();
 }
 
-void CVideoPlayerDlg::SetCurrentCourse(int courseIndex)
+void CVideoPlayerDlg::SetCurrentCourseIndex(int courseIndex)
 {
 	SelectListBox(m_courseList, courseIndex);
-}
-
-int CVideoPlayerDlg::GetCurrentChapter() const
-{
-	return m_courseChapterList.GetCurSel();
-}
-
-void CVideoPlayerDlg::SetCurrentChapter(int chapterIndex)
-{
-	SelectListBox(m_courseChapterList, chapterIndex);
 }
 
 void CVideoPlayerDlg::SelectListBox(CImageListBoxCtrl &listbox, int index)
@@ -261,6 +192,22 @@ void CVideoPlayerDlg::SelectListBox(CImageListBoxCtrl &listbox, int index)
 	SendMessage(WM_COMMAND,
 		MAKEWPARAM(listbox.GetDlgCtrlID(), LBN_SELCHANGE),
 		(LPARAM)listbox.m_hWnd);
+}
+
+void CVideoPlayerDlg::InitVolume()
+{
+	SetSliderRange(m_hWndVolume, 0, 100);
+	SetSliderPos(m_hWndVolume, m_playlist.GetVolume());
+}
+
+int CVideoPlayerDlg::GetCurrentChapterIndex() const
+{
+	return m_courseChapterList.GetCurSel();
+}
+
+void CVideoPlayerDlg::SetCurrentChapterIndex(int chapterIndex)
+{
+	SelectListBox(m_courseChapterList, chapterIndex);
 }
 
 void CVideoPlayerDlg::DeleteAllCourseChapters()
@@ -276,22 +223,17 @@ void CVideoPlayerDlg::DeleteAllCourseChapters()
 	}
 }
 
-void CVideoPlayerDlg::AddCourseChapters()
+void CVideoPlayerDlg::AddCourseChapters(const shared_ptr<Course> course)
 {
-	const Course &course = GetCurrentCourse();
-	for (size_t i = 0; i < course.GetChapterCount(); ++i)
+	for (size_t i = 0; i < course->GetChapterCount(); ++i)
 	{
-		const Chapter &chapter = course.GetChapter(i);
-		tstring itemName = FileUtil::GetFileName(chapter.GetFilePath());
-
-		size_t len = itemName.length() + 1;
-		vector<TCHAR> buf(len, '\0');
-		_tcscpy_s(&buf[0], len, itemName.data());
+		const Chapter &chapter = course->GetChapter(i);
+		tstring itemName = chapter.GetTitle();
 
 		ILBITEM item = { 0 };
 		item.mask = ILBIF_TEXT | ILBIF_STYLE | ILBIF_FORMAT;
 		item.iItem = i;
-		item.pszText = &buf[0];
+		item.pszText = const_cast<LPTSTR>(itemName.data());
 		item.style = ILBS_SELROUND;
 		item.format = DT_LEFT | DT_VCENTER;
 		m_courseChapterList.InsertItem(&item);
@@ -319,27 +261,6 @@ void CVideoPlayerDlg::CreateBitmapButton(int nButtonID, const std::vector<int> &
 	bitmapButton.SetImages(0, -1, 1);
 }
 
-HBITMAP CVideoPlayerDlg::LoadBitmapWithPNG(int nID)
-{
-	return AtlLoadGdiplusImage(nID, _T("PNG"));
-}
-
-HBITMAP CVideoPlayerDlg::CreateHoverBitmapWithPNG(HDC hDC, int nID)
-{
-	CBitmap srcBitmap = LoadBitmapWithPNG(nID);
-
-	SIZE bitmapSize = { 0 };
-	srcBitmap.GetSize(bitmapSize);
-
-	CDC dc;
-	dc.CreateCompatibleDC(hDC);
-	HBITMAP hOldBitmap = dc.SelectBitmap(srcBitmap);
-	dc.BitBlt(0, 0, bitmapSize.cx, bitmapSize.cy, dc, 0, 0, PATINVERT);
-	dc.SelectBitmap(hOldBitmap);
-
-	return srcBitmap.Detach();
-}
-
 void CVideoPlayerDlg::UpdatePlayTime()
 {
 	int64_t curPos = m_coursePlayer.GetTime();
@@ -359,15 +280,9 @@ void CVideoPlayerDlg::UpdatePlayTime()
 		mediaLengthTime.GetMinutes(),
 		mediaLengthTime.GetSeconds());
 
-	SetMediaTimePos(curPos);
+	SetSliderPos(m_hWndMediaTime, (LPARAM)curPos / 1000);
 
 	DoDataExchange(false);
-}
-
-void CVideoPlayerDlg::SetMediaTimePos(int64_t curPos)
-{
-	m_iMediaTime = curPos;
-	SetSliderPos(m_hWndMediaTime, (LPARAM)m_iMediaTime / 1000);
 }
 
 void CVideoPlayerDlg::SetSliderPos(HWND hWnd, LPARAM pos)
@@ -440,7 +355,7 @@ LRESULT CVideoPlayerDlg::OnHScroll(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 	int iScrollCode = (int)LOWORD(wParam);
 	HWND hWndScrollBar = (HWND)lParam;
 
-	if (m_hWndMediaTime == hWndScrollBar)
+	if (m_hWndMediaTime == hWndScrollBar)	//播放时间
 	{
 		int nPos = SendMessage(hWndScrollBar, TBM_GETPOS, 0, 0);
 
@@ -453,7 +368,7 @@ LRESULT CVideoPlayerDlg::OnHScroll(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 			break;
 		}
 	}
-	else if (m_hWndVolume == hWndScrollBar)
+	else if (m_hWndVolume == hWndScrollBar)	//音量
 	{
 		int nPos = SendMessage(hWndScrollBar, TBM_GETPOS, 0, 0);
 
@@ -481,26 +396,31 @@ LRESULT CVideoPlayerDlg::OnCourseListSelChanged(WORD /*wNotifyCode*/, WORD /*wID
 	if (IsCourseSelected())
 		return TRUE;
 
-	m_selectCourseIndex = m_courseList.GetCurSel();
-	m_playingObject.SetCourse(m_config.GetCourses()[m_selectCourseIndex]);
+	m_playlist.SetCourseByIndex(m_courseList.GetCurSel());
 
 	DeleteAllCourseChapters();
-	AddCourseChapters();
+	AddCourseChapters(m_playlist.GetCourse());
 
-	SetCurrentChapter(0);
+	SetCurrentChapterIndex(m_playlist.GetSelectedCourseLastPlayChapterIndex());
 
 	return 0;
 }
 
+static bool isFirstSelected = false;
 bool CVideoPlayerDlg::IsCourseSelected() const
 {
-	return m_selectCourseIndex == m_courseList.GetCurSel();
+	if (!isFirstSelected)
+	{
+		isFirstSelected = true;
+		return false;
+	}
+
+	return m_playlist.GetCurrentCourseIndex() == m_courseList.GetCurSel();
 }
 
 LRESULT CVideoPlayerDlg::OnCourseChapterListSelChanged(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	int iItem = m_courseChapterList.GetCurSel();
-	m_selectCourseChapterIndex = iItem;
+	m_playlist.SetCurrentChapterIndex(m_courseChapterList.GetCurSel());
 	return 0;
 }
 
@@ -528,12 +448,12 @@ LRESULT CVideoPlayerDlg::OnCoursePlay(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /
 	else if (m_coursePlayer.IsPlaying())
 	{
 		m_coursePlayer.Pause();
-		m_bmpBtnPlay.SetImages(2, -1, 3);
+		m_bmpBtnPlay.SetImages(0, -1, 1);
 	}
 	else if (m_coursePlayer.IsPaused())
 	{
 		m_coursePlayer.Play();
-		m_bmpBtnPlay.SetImages(0, -1, 1);
+		m_bmpBtnPlay.SetImages(2, -1, 3);
 	}
 
 	return 0;
@@ -541,7 +461,9 @@ LRESULT CVideoPlayerDlg::OnCoursePlay(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /
 
 void CVideoPlayerDlg::Play()
 {
-	tstring selectedFilename = GetCurrentChapter().GetFilePath();
+	const Chapter& currentChapter = m_playlist.GetCurrentChapter();
+
+	tstring selectedFilename = currentChapter.GetFilePath();
 	if (FileUtil::IsExistWithFile(selectedFilename))
 	{
 		m_coursePlayer.OpenMedia(selectedFilename);
@@ -550,11 +472,14 @@ void CVideoPlayerDlg::Play()
 		Sleep(100);
 
 		InitMediaTimeControl();
-		m_bmpBtnPlay.SetImages(0, -1, 1);
+		m_bmpBtnPlay.SetImages(2, -1, 3);
 		m_bmpBtnPlay.Invalidate();
 
-		m_playingObject.SetCurrentCourseIndexWithListBox(m_selectCourseIndex);
-		m_playingObject.SetCurrentChapterIndexWithListBox(m_selectCourseChapterIndex);
+		m_playlist.SetPlayRecord(m_courseList.GetCurSel(), m_courseChapterList.GetCurSel());
+		//m_playlist.SetCurrentCourseIndex(m_courseList.GetCurSel());
+		//m_playlist.SetCurrentChapterIndex(m_courseChapterList.GetCurSel());
+
+		m_coursePlayer.SetTime(currentChapter.GetStartTime());
 	}
 	else
 	{
@@ -564,7 +489,7 @@ void CVideoPlayerDlg::Play()
 
 void CVideoPlayerDlg::InitMediaTimeControl()
 {
-	SetSliderRange(m_hWndMediaTime, 0, m_coursePlayer.GetLength() / 1000);
+	SetSliderRange(m_hWndMediaTime, 0, static_cast<DWORD>(m_coursePlayer.GetLength() / 1000));
 	SetSliderPos(m_hWndMediaTime, 0);
 }
 
@@ -614,6 +539,8 @@ LRESULT CVideoPlayerDlg::OnFullScreen(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /
 
 LRESULT CVideoPlayerDlg::OnExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
+	m_config.Save();
+
 	UIEnable(ID_APP_EXIT, !m_bmpBtnAppExit.IsWindowEnabled());
 	this->GetParent().PostMessage(WM_CLOSE);
 	return 0;
@@ -623,33 +550,31 @@ LRESULT CVideoPlayerDlg::OnCoursePlayerTimeChanged(UINT /*uMsg*/, WPARAM /*wPara
 {
 	UpdatePlayTime();
 
-	if (m_iMediaTime >= m_coursePlayer.GetLength())
+	if (m_coursePlayer.IsEnded())
 	{
 		m_coursePlayer.Stop();
-		m_iMediaTime = 0;
-
 		PlayCourseNextChapter();
 	}
 
 	return TRUE;
 }
 
-void CVideoPlayerDlg::PlayCourseNextChapter()
+void CVideoPlayerDlg::PlayCoursePrevChapter()
 {
-	if (m_selectCourseChapterIndex < GetCurrentCourse().GetChapterCount()-1)
+	int index = m_playlist.GetPrevChapter();
+	if (index != -1)
 	{
-		++m_selectCourseChapterIndex;
-		SetCurrentChapter(m_selectCourseChapterIndex);
+		SetCurrentChapterIndex(index);
 		Play();
 	}
 }
 
-void CVideoPlayerDlg::PlayCoursePrevChapter()
+void CVideoPlayerDlg::PlayCourseNextChapter()
 {
-	if (m_selectCourseChapterIndex > 0 && GetCurrentCourse().GetChapterCount())
+	int index = m_playlist.GetNextChapter();
+	if (index != -1)
 	{
-		--m_selectCourseChapterIndex;
-		SetCurrentChapter(m_selectCourseChapterIndex);
+		SetCurrentChapterIndex(index);
 		Play();
 	}
 }
@@ -660,14 +585,4 @@ LRESULT CVideoPlayerDlg::OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndC
 
 	EndDialog(wID);
 	return 0;
-}
-
-const Course& CVideoPlayerDlg::GetCurrentCourse() const
-{
-	return m_playingObject.GetCourse();
-}
-
-const Chapter& CVideoPlayerDlg::GetCurrentChapter() const
-{
-	return GetCurrentCourse().GetChapter(m_selectCourseChapterIndex);
 }

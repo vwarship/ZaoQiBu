@@ -14,44 +14,118 @@
 using std::vector;
 using std::string;
 
-class PlayingObject
+class Playlist
 {
 public:
-	void SetCourse(const Course &course)
+	Playlist()
 	{
-		m_course = course;
 	}
 
-	const Course& GetCourse() const
+	void SetCourses(shared_ptr<Courses> courses)
+	{
+		m_courses = courses;
+	}
+
+	shared_ptr<Courses> GetCourses() const
+	{
+		return m_courses;
+	}
+
+	void SetCourseByIndex(size_t index)
+	{
+		if (index < m_courses->Count())
+		{
+			m_course = m_courses->GetCourse(index);
+			m_currentCourseIndex = index;
+		}
+	}
+
+	shared_ptr<Course> GetCourse() const
 	{
 		return m_course;
 	}
 
-	void SetCurrentCourseIndexWithListBox(int currentCourseIndexWithListBox)
+	const Chapter& GetCurrentChapter() const
 	{
-		m_currentCourseIndexWithListBox = currentCourseIndexWithListBox;
+		return m_course->GetChapter(m_currentChapterIndex);
 	}
 
-	int GetCurrentCourseIndexWithListBox() const
+	void SetPlayRecord(int lastPlayCourseIndex, int lastPlayChapterIndex)
 	{
-		return m_currentCourseIndexWithListBox;
+		m_courses->SetLastPlayCourseIndex(lastPlayCourseIndex);
+		m_courses->GetCourse(lastPlayCourseIndex)->GetPlayRecord().SetLastPlayChapterIndex(lastPlayChapterIndex);
 	}
 
-	void SetCurrentChapterIndexWithListBox(int currentChapterIndexWithListBox)
+	int GetLastPlayCourseIndex() const
 	{
-		m_currentChapterIndexWithListBox = currentChapterIndexWithListBox;
+		return m_courses->GetLastPlayCourseIndex();
 	}
 
-	int GetCurrentChapterIndexWithListBox() const
+	void SetVolume(int volume)
 	{
-		return m_currentChapterIndexWithListBox;
+		m_courses->SetVolume(volume);
+	}
+
+	int GetVolume() const
+	{
+		return m_courses->GetVolume();
+	}
+
+	void SetCurrentCourseIndex(int index)
+	{
+		m_currentCourseIndex = index;
+	}
+
+	int GetCurrentCourseIndex() const
+	{
+		return m_currentCourseIndex;
+	}
+
+	void SetCurrentChapterIndex(int index)
+	{
+		m_currentChapterIndex = index;
+	}
+
+	int GetCurrentChapterIndex() const
+	{
+		return m_currentChapterIndex;
+	}
+
+	int GetPrevChapter() const
+	{
+		if (m_currentChapterIndex > 0 && m_course->GetChapterCount())
+			return m_currentChapterIndex - 1;
+
+		return -1;
+	}
+
+	int GetNextChapter() const
+	{
+		if (m_currentChapterIndex < static_cast<int>(m_course->GetChapterCount()) - 1)
+			return m_currentChapterIndex + 1;
+
+		return -1;
+	}
+
+	int GetSelectedCourseLastPlayChapterIndex() const
+	{
+		return m_course->GetPlayRecord().GetLastPlayChapterIndex();
+	}
+
+	int GetSelectedCourseLastPlayChapterTime() const
+	{
+		return m_course->GetPlayRecord().GetLastPlayChapterTime();
 	}
 
 private:
-	Course m_course;
+	shared_ptr<Courses> m_courses;
+	shared_ptr<Course> m_course;
 
-	int m_currentCourseIndexWithListBox;
-	int m_currentChapterIndexWithListBox;
+	int m_currentCourseIndex = 0;
+	int m_currentChapterIndex = 0;
+
+	int m_playingCourseIndex = 0;
+	int m_playingChapterIndex = 0;
 
 };
 
@@ -169,30 +243,26 @@ private:
 	void LoadConfig();
 
 	void InsertCourses();
-	void InsertCourse(const Course &course, int iImage);
+	void InsertCourse(const shared_ptr<Course> course, int iImage);
 	void AddCourseImage(LPCTSTR pszImageFilename);
+	HBITMAP LoadBitmapWithPNG(int nID);
 	void DeleteAllCourseChapters();
-	void AddCourseChapters();
+	void AddCourseChapters(const shared_ptr<Course> course);
 
-	void SetCurrentCourse(int courseIndex);
-	void SetCurrentChapter(int courseIndex);
+	void SetCurrentCourseIndex(int courseIndex);
+	void SetCurrentChapterIndex(int courseIndex);
 	void SelectListBox(CImageListBoxCtrl &listbox, int index);
-	int GetCurrentCourse() const;
-	int GetCurrentChapter() const;
+	int GetCurrentCourseIndex() const;
+	int GetCurrentChapterIndex() const;
 
 	bool IsCourseSelected() const;
 
 	void CreateBitmapButton(int nButtonID, const std::vector<int> &imageIDs, PCTSTR toolTipText, CBitmapButton &bitmapButton);
 
-	HBITMAP LoadBitmapWithPNG(int nID);
-	HBITMAP CreateHoverBitmapWithPNG(HDC hDC, int nID);
-	CRect CalcDestImageRect(SIZE srcSize, SIZE destSize) const;
-
 	void ShowChildWindows(bool isShow);
 
 	void Play();
 	void FullScreen(bool isFullScreen);
-	void SetMediaTime();
 	void SetVolume();
 
 	void InitMediaTimeControl();
@@ -202,16 +272,13 @@ private:
 	void SetSliderPos(HWND hWnd, LPARAM pos);
 	void SetSliderRange(HWND hWnd, DWORD start, DWORD end);
 
-	const Course& GetCurrentCourse() const;
-	const Chapter& GetCurrentChapter() const;
-
 private:
 	CImageListBoxCtrl m_courseList;
 	CImageList m_courseImageList;
-	int m_selectCourseIndex;
+	//int m_selectCourseIndex;
 
 	CImageListBoxCtrl m_courseChapterList;
-	int m_selectCourseChapterIndex;
+	//int m_selectCourseChapterIndex;
 
 	CoursePlayer m_coursePlayer;
 
@@ -229,17 +296,13 @@ private:
 	WTL::CString m_sMediaLength;
 
 	HWND m_hWndMediaTime;
-	int64_t m_iMediaTime;
 	static const int64_t MEDIA_TIME_DEFAULT_VALUE = 0;
 
 	HWND m_hWndVolume;
-	int m_iVolume;
 	static const int VOLUME_DEFAULT_VALUE = 100;
 
-
 	Config m_config;
-
-	PlayingObject m_playingObject;
+	Playlist m_playlist;
 
 };
 

@@ -111,6 +111,77 @@ ATLINLINE VOID AlphaBlendStretch(CDCHandle dcDest, CRect rcDest, CDCHandle dcSrc
    dcDest.AlphaBlend(rcDest.right - rcCorners.right, rcDest.bottom - rcCorners.bottom, rcCorners.right, rcCorners.bottom, dcSrc, rcBmp.right - rcCorners.right, rcBmp.bottom - rcCorners.bottom, rcCorners.right, rcCorners.bottom, bf);
 }
 
+ATLINLINE HBITMAP CreateHoverBitmapWithPNG(HDC hDC, int nID)
+{
+	CBitmap srcBitmap = AtlLoadGdiplusImage(nID, _T("PNG"));
 
+	SIZE bitmapSize = { 0 };
+	srcBitmap.GetSize(bitmapSize);
+
+	CDC dc;
+	dc.CreateCompatibleDC(hDC);
+	HBITMAP hOldBitmap = dc.SelectBitmap(srcBitmap);
+	dc.BitBlt(0, 0, bitmapSize.cx, bitmapSize.cy, dc, 0, 0, PATINVERT);
+	dc.SelectBitmap(hOldBitmap);
+
+	return srcBitmap.Detach();
+}
+
+ATLINLINE CRect CalcDestImageRect(SIZE srcSize, SIZE destSize)
+{
+	if (srcSize.cx >= destSize.cx || srcSize.cy >= destSize.cy)
+	{
+		// 计算出实际宽高和目标宽高的比率
+		double widthRatio = (double)srcSize.cx / destSize.cx;
+		double heightRatio = (double)srcSize.cy / destSize.cy;
+
+		// 选择宽和高中最小的比率作为inSampleSize的值，这样可以保证最终图片的宽和高
+		// 一定都会大于等于目标的宽和高。
+		double ratio = heightRatio > widthRatio ? heightRatio : widthRatio;
+
+		SIZE destRealSize = { (int)(srcSize.cx / ratio), (int)(srcSize.cy / ratio) };
+		CRect destRect = { 0, 0, destSize.cx, destSize.cy };
+		if (heightRatio > widthRatio) //调整宽度
+		{
+			int adjustSize = (destRect.Width() - destRealSize.cx) / 2;
+			destRect.DeflateRect(adjustSize, 0);
+		}
+		else
+		{
+			int adjustSize = (destRect.Height() - destRealSize.cy) / 2;
+			destRect.DeflateRect(0, adjustSize);
+		}
+
+		return destRect;
+	}
+
+	return CRect();
+}
+
+ATLINLINE HBITMAP CreateThumbnail(HDC hDC, const CBitmap &bitmap, SIZE thumbnailSize)
+{
+	SIZE srcSize = { 0 };
+	bitmap.GetSize(srcSize);
+
+	CDC srcDC;
+	srcDC.CreateCompatibleDC(hDC);
+	HBITMAP hOldSrcBitmap = srcDC.SelectBitmap(bitmap);
+
+	CDC destDC;
+	destDC.CreateCompatibleDC(hDC);
+
+	CBitmap destBitmap;
+	destBitmap.CreateCompatibleBitmap(hDC, thumbnailSize.cx, thumbnailSize.cy);
+	HBITMAP hOldDestBitmap = destDC.SelectBitmap(destBitmap);
+	destDC.SetStretchBltMode(HALFTONE);
+	CRect destCenterRect = CalcDestImageRect(srcSize, thumbnailSize);
+	destDC.StretchBlt(destCenterRect.left, destCenterRect.top, destCenterRect.Width(), destCenterRect.Height(),
+		srcDC, 0, 0, srcSize.cx, srcSize.cy, SRCCOPY);
+	destDC.SelectBitmap(hOldDestBitmap);
+
+	srcDC.SelectBitmap(hOldSrcBitmap);
+
+	return destBitmap.Detach();
+}
 #endif // !defined(_WTL_IMAGEHELPERS_)
 

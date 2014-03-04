@@ -3,6 +3,35 @@
 #include "Chapter.h"
 #include "tstring.h"
 
+class PlayRecord
+{
+public:
+	void SetLastPlayChapterIndex(int lastPlayChapterIndex)
+	{
+		m_lastPlayChapterIndex = lastPlayChapterIndex;
+	}
+
+	int GetLastPlayChapterIndex() const
+	{
+		return m_lastPlayChapterIndex;
+	}
+
+	void SetLastPlayChapterTime(int lastPlayChapterTime)
+	{
+		m_lastPlayChapterTime = lastPlayChapterTime;
+	}
+
+	int GetLastPlayChapterTime() const
+	{
+		return m_lastPlayChapterTime;
+	}
+
+private:
+	int m_lastPlayChapterIndex = 0;
+	int m_lastPlayChapterTime = 0;
+
+};
+
 class Course
 {
 public:
@@ -51,12 +80,35 @@ public:
 		return m_chapters.size();
 	}
 
+	void SetPath(const tstring &path)
+	{
+		m_path = path;
+	}
+
+	const tstring& GetPath() const
+	{
+		return m_path;
+	}
+
+	void SetPlayRecord(const PlayRecord &playRecord)
+	{
+		m_playRecord = playRecord;
+	}
+
+	PlayRecord& GetPlayRecord()
+	{
+		return m_playRecord;
+	}
+
 private:
 	tstring m_title;
 	tstring m_author;
 	tstring m_icon;
 
 	std::vector<Chapter> m_chapters;
+
+	tstring m_path;
+	PlayRecord m_playRecord;
 
 };
 

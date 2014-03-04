@@ -21,7 +21,7 @@ int Run(LPTSTR /*lpstrCmdLine*/ = NULL, int nCmdShow = SW_SHOWDEFAULT)
 		return 0;
 	}
 
-	wndMain.ShowWindow(SW_SHOWMAXIMIZED);//SW_SHOWMAXIMIZED
+	wndMain.ShowWindow(SW_SHOWMAXIMIZED);
 
 	int nRet = theLoop.Run();
 

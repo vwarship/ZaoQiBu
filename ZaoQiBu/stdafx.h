@@ -29,6 +29,12 @@ extern CAppModule _Module;
 #include <commctrl.h>
 //#include <atlimage.h>
 
+#include <memory>
+#include <string>
+#include <vector>
+
+using std::shared_ptr;
+
 #include "ImageHelpers.h"
 
 #include "resource.h"

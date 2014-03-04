@@ -5,7 +5,7 @@
 class CourseUtil
 {
 public:
-	static Course Create(const tstring &courseFilename);
+	static shared_ptr<Course> Create(const tstring &courseFilename);
 
 };
 
