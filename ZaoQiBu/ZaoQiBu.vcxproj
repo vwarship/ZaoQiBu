@@ -17,13 +17,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -90,12 +90,13 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ExceptionHandling />
       <DebugInformationFormat />
-      <PreprocessorDefinitions>WIN32;_WINDOWS;STRICT;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PUGIXML_WCHAR_MODE;WIN32;_WINDOWS;STRICT;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalDependencies>libvlc.lib;libvlccore.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ResourceCompile>
       <Culture>0x0409</Culture>
@@ -113,6 +114,9 @@
       <TypeLibraryName>$(IntDir)/ZaoQiBu.tlb</TypeLibraryName>
       <DllDataFileName />
     </Midl>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "$(SolutionDir)bin\$(TargetName)$(TargetExt)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Chapter.cpp" />
@@ -163,12 +167,15 @@
     <ResourceCompile Include="ZaoQiBu.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\add_course.png" />
     <Image Include="res\app_exit.png" />
+    <Image Include="res\background.jpg" />
     <Image Include="res\course_icon_carrot.png" />
     <Image Include="res\course_next.png" />
     <Image Include="res\course_pause.png" />
     <Image Include="res\course_play.png" />
     <Image Include="res\course_prev.png" />
+    <Image Include="res\delete_course.png" />
     <Image Include="res\full_screen.png" />
     <Image Include="res\logo.png" />
     <Image Include="res\snapshot.png" />

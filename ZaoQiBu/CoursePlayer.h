@@ -60,26 +60,26 @@ public:
 	//	if (!m_brBack.IsNull()) m_brBack.DeleteObject();
 	//}
 
-	//void SetBitmap(HBITMAP hBitmap)
-	//{
-	//	m_bmpImage = (HBITMAP) ::CopyImage(hBitmap, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
-	//	if (IsWindow()) Invalidate();
-	//}
+	void SetBitmap(HBITMAP hBitmap)
+	{
+		m_bmpImage = (HBITMAP) ::CopyImage(hBitmap, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
+		if (IsWindow()) Invalidate();
+	}
 
-	//void SetBitmap(UINT nRes, LPCTSTR pstrType)
-	//{
-	//	m_bmpImage = AtlLoadGdiplusImage(nRes, pstrType);
-	//	if (IsWindow()) Invalidate();
-	//}
+	void SetBitmap(UINT nRes, LPCTSTR pstrType)
+	{
+		m_bmpImage = AtlLoadGdiplusImage(nRes, pstrType);
+		if (IsWindow()) Invalidate();
+	}
 
-	//void SizeToFit()
-	//{
-	//	ATLASSERT(!m_bmpImage.IsNull());
-	//	BITMAP BmpInfo = { 0 };
-	//	m_bmpImage.GetBitmap(&BmpInfo);
-	//	ResizeClient(BmpInfo.bmWidth, BmpInfo.bmHeight);
-	//	if (IsWindow()) Invalidate();
-	//}
+	void SizeToFit()
+	{
+		ATLASSERT(!m_bmpImage.IsNull());
+		BITMAP BmpInfo = { 0 };
+		m_bmpImage.GetBitmap(&BmpInfo);
+		ResizeClient(BmpInfo.bmWidth, BmpInfo.bmHeight);
+		if (IsWindow()) Invalidate();
+	}
 
 	// Message map and handlers
 
@@ -137,19 +137,20 @@ public:
 		dc.PatBlt(rcClient.left, rcClient.top, rcClient.Width(), rcClient.Height(), PATCOPY);
 		dc.SelectBrush(hOldBrush);
 
-		//// Paint image (assume that it is a 32bit with alpha-pr-pixel)...
-		//CDC dcCompat;
-		//dcCompat.CreateCompatibleDC(dc);
-		//BITMAP BmpInfo = { 0 };
-		//m_bmpImage.GetBitmap(&BmpInfo);
-		//BLENDFUNCTION bf = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
-		//HBITMAP hOldBitmap = dcCompat.SelectBitmap(m_bmpImage);
-		//dc.AlphaBlend(0, 0, rcClient.Width(), rcClient.Height(), dcCompat, 0, 0, BmpInfo.bmWidth, BmpInfo.bmHeight, bf);
-		//dcCompat.SelectBitmap(hOldBitmap);
+		// Paint image (assume that it is a 32bit with alpha-pr-pixel)...
+		CDC dcCompat;
+		dcCompat.CreateCompatibleDC(dc);
+		BITMAP BmpInfo = { 0 };
+		m_bmpImage.GetBitmap(&BmpInfo);
+		BLENDFUNCTION bf = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
+		HBITMAP hOldBitmap = dcCompat.SelectBitmap(m_bmpImage);
+		dc.AlphaBlend(0, 0, rcClient.Width(), rcClient.Height(), dcCompat, 0, 0, BmpInfo.bmWidth, BmpInfo.bmHeight, bf);
+		dcCompat.SelectBitmap(hOldBitmap);
 	}
 
 private:
 	std::string EncodeToUTF8(const std::string &mbcsStr) const;
+	std::string WCHARToUTF8(const wchar_t *pwStr) const;
 
 private:
 	VLCWrapper m_vlcPlayer;

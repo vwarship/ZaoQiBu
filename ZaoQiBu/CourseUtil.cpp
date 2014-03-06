@@ -13,7 +13,7 @@ using pugi::xml_parse_result;
 
 shared_ptr<Course> CourseUtil::Create(const tstring &courseFilename)
 {
-	shared_ptr<Course> course(new Course());
+	shared_ptr<Course> course;
 
 	tstring courseDir = FileUtil::GetFileDirectory(courseFilename);
 
@@ -21,6 +21,8 @@ shared_ptr<Course> CourseUtil::Create(const tstring &courseFilename)
 	xml_parse_result parseResult = xml_doc.load_file(courseFilename.data());
 	if (parseResult.status != pugi::status_ok)
 		return course;
+
+	course.reset(new Course());
 
 	xml_node headNode = xml_doc.select_single_node(_T("/zaoqibu/head")).node();
 	tstring title = headNode.child(_T("title")).text().as_string();

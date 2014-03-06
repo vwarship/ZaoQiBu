@@ -173,5 +173,10 @@
     <Image Include="res\snapshot.png" />
     <Image Include="res\sound_off.png" />
     <Image Include="res\sound_on.png" />
+    <Image Include="res\add_course.png" />
+    <Image Include="res\delete_course.png" />
+    <Image Include="res\background.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

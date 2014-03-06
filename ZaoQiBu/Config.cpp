@@ -17,13 +17,22 @@ using pugi::xml_document;
 using pugi::xml_parse_result;
 
 static PCTSTR CONFIG_FILENAME = _T("zaoqibu.xml");
+tstring Config::m_configFilePath;
+
+Config::Config()
+{
+	TCHAR path[BUF_SIZE] = { 0 };
+	GetModuleFileName(NULL, path, BUF_SIZE);
+
+	m_configFilePath = FileUtil::GetFileDirectory(path) + _T("\\") + CONFIG_FILENAME;
+}
 
 bool Config::Load()
 {
 	m_courses.reset(new Courses);
 
 	xml_document xml_doc;
-	xml_parse_result parseResult = xml_doc.load_file(CONFIG_FILENAME);
+	xml_parse_result parseResult = xml_doc.load_file(m_configFilePath.data());
 	if (parseResult.status == pugi::status_ok)
 	{
 		xpath_node node = xml_doc.select_single_node(_T("/ZaoQiBu/Courses"));
@@ -90,7 +99,7 @@ void Config::Save()
 		attr.set_value(course->GetPlayRecord().GetLastPlayChapterTime());
 	}
 
-	xml_doc.save_file(CONFIG_FILENAME);
+	xml_doc.save_file(m_configFilePath.data());
 }
 
 shared_ptr<Courses> Config::GetCourses()

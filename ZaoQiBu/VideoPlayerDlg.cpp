@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "VideoPlayerDlg.h"
+#include "CourseUtil.h"
 
 CVideoPlayerDlg::CVideoPlayerDlg()
 : m_isFullScreen(false)
@@ -76,6 +77,8 @@ LRESULT CVideoPlayerDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /
 {
 	CenterWindow(GetParent());
 
+	m_coursePlayer.SetBitmap(IDB_BACKGROUND, _T("JPG"));
+
 	m_courseList.SubclassWindow(GetDlgItem(IDC_COURSE_LIST));
 	m_courseList.SetItemHeight(0, 70);
 
@@ -100,6 +103,9 @@ LRESULT CVideoPlayerDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /
 	SetCurrentCourseIndex(m_playlist.GetLastPlayCourseIndex());
 
 	m_coursePlayer.SubclassWindow(GetDlgItem(IDC_COURSE_PLAYER));
+
+	CreateBitmapButton(IDC_ADD_COURSE, { IDB_ADD_COURSE }, _T("增加课程"), m_bmpBtnAddCourse, 32);
+	CreateBitmapButton(IDC_DELETE_COURSE, { IDB_DELETE_COURSE }, _T("删除课程"), m_bmpBtnDeleteCourse, 32);
 
 	CreateBitmapButton(ID_APP_EXIT, { IDB_APP_EXIT }, _T("退出"), m_bmpBtnAppExit);
 	CreateBitmapButton(IDC_COURSE_PREV_CHAPTER, { IDB_COURSE_PREV_CHAPTER }, _T("上一章 热键:Page Up"), m_bmpBtnCoursePrevChapter);
@@ -180,6 +186,12 @@ int CVideoPlayerDlg::GetCurrentCourseIndex() const
 
 void CVideoPlayerDlg::SetCurrentCourseIndex(int courseIndex)
 {
+	if (m_courseList.GetCount() <= 0)
+		return;
+
+	if (courseIndex >= m_courseList.GetCount())
+		courseIndex = 0;
+
 	SelectListBox(m_courseList, courseIndex);
 }
 
@@ -214,11 +226,11 @@ void CVideoPlayerDlg::DeleteAllCourseChapters()
 {
 	for (int i = m_courseChapterList.GetCount() - 1; i >= 0; --i)
 	{
-		PILBITEM pItem = (PILBITEM)m_courseChapterList.GetItemDataPtr(i);
+		//PILBITEM pItem = (PILBITEM)m_courseChapterList.GetItemDataPtr(i);
 
-		DELETEITEMSTRUCT dis = { 0 };
-		dis.itemData = reinterpret_cast<ULONG_PTR>(pItem);
-		m_courseChapterList.DeleteItem(&dis);
+		//DELETEITEMSTRUCT dis = { 0 };
+		//dis.itemData = reinterpret_cast<ULONG_PTR>(pItem);
+		//m_courseChapterList.DeleteItem(&dis);
 		m_courseChapterList.DeleteString(i);
 	}
 }
@@ -240,7 +252,7 @@ void CVideoPlayerDlg::AddCourseChapters(const shared_ptr<Course> course)
 	}
 }
 
-void CVideoPlayerDlg::CreateBitmapButton(int nButtonID, const std::vector<int> &imageIDs, PCTSTR toolTipText, CBitmapButton &bitmapButton)
+void CVideoPlayerDlg::CreateBitmapButton(int nButtonID, const std::vector<int> &imageIDs, PCTSTR toolTipText, CBitmapButton &bitmapButton, int size/* = 48*/)
 {
 	bitmapButton.SubclassWindow(GetDlgItem(nButtonID));
 	bitmapButton.SetToolTipText(toolTipText);
@@ -249,7 +261,7 @@ void CVideoPlayerDlg::CreateBitmapButton(int nButtonID, const std::vector<int> &
 	size_t imageIDCount = imageIDs.size();
 
 	CImageList imageList;
-	imageList.Create(48, 48, TRUE | ILC_COLOR32, 2 * imageIDCount, 2 * imageIDCount);
+	imageList.Create(size, size, TRUE | ILC_COLOR32, 2 * imageIDCount, 2 * imageIDCount);
 
 	for (int imageID : imageIDs)
 	{
@@ -393,8 +405,8 @@ LRESULT CVideoPlayerDlg::OnHScroll(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 LRESULT CVideoPlayerDlg::OnCourseListSelChanged(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
 	//避免对当前已经选中的课程重复响应
-	if (IsCourseSelected())
-		return TRUE;
+	//if (IsCourseSelected())
+	//	return TRUE;
 
 	m_playlist.SetCourseByIndex(m_courseList.GetCurSel());
 
@@ -484,6 +496,7 @@ void CVideoPlayerDlg::Play()
 	else
 	{
 		//更新画面
+
 	}
 }
 
@@ -502,6 +515,7 @@ LRESULT CVideoPlayerDlg::OnCourseNextChapter(WORD /*wNotifyCode*/, WORD /*wID*/,
 
 LRESULT CVideoPlayerDlg::OnSnapshot(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
+	UIEnable(IDC_SNAPSHOT, !m_bmpBtnSnapshot.IsWindowEnabled());
 	m_coursePlayer.Snapshot();
 	return 0;
 }
@@ -584,5 +598,31 @@ LRESULT CVideoPlayerDlg::OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndC
 	m_coursePlayer.Stop();
 
 	EndDialog(wID);
+	return 0;
+}
+
+LRESULT CVideoPlayerDlg::OnAddCourse(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	UIEnable(IDC_ADD_COURSE, !m_bmpBtnAddCourse.IsWindowEnabled());
+
+	CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, _T("早起步课程 (*.zqb)\0*.zqb\0"));
+	if (dlg.DoModal() == IDOK)
+	{
+		shared_ptr<Course> course = CourseUtil::Create(dlg.m_szFileName);
+		if (course)
+		{
+			course->SetPath(dlg.m_szFileName);
+			m_playlist.AddCourse(course);
+			InsertCourse(course, m_courseList.GetCount());
+		}
+	}
+
+	return 0;
+}
+
+LRESULT CVideoPlayerDlg::OnDeleteCourse(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	UIEnable(IDC_DELETE_COURSE, !m_bmpBtnDeleteCourse.IsWindowEnabled());
+
 	return 0;
 }

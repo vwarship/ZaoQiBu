@@ -45,6 +45,11 @@ public:
 		return m_course;
 	}
 
+	void AddCourse(shared_ptr<Course> course)
+	{
+		m_courses->AddCourse(course);
+	}
+
 	const Chapter& GetCurrentChapter() const
 	{
 		return m_course->GetChapter(m_currentChapterIndex);
@@ -161,6 +166,8 @@ public:
 		COMMAND_ID_HANDLER(IDC_MUTE, OnMute)
 		COMMAND_ID_HANDLER(IDC_FULL_SCREEN, OnFullScreen)
 		COMMAND_ID_HANDLER(ID_APP_EXIT, OnExit)
+		COMMAND_ID_HANDLER(IDC_ADD_COURSE, OnAddCourse)
+		COMMAND_ID_HANDLER(IDC_DELETE_COURSE, OnDeleteCourse)
 		//MESSAGE_HANDLER(WM_CHAR, OnChar)
 		//MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
 		//MESSAGE_HANDLER(WM_LBUTTONDBLCLK, OnLButtonDBlclk)
@@ -193,14 +200,20 @@ public:
 		DLGRESIZE_CONTROL(IDC_VOLUME, DLSZ_MOVE_Y)
 		DLGRESIZE_CONTROL(IDC_FULL_SCREEN, DLSZ_MOVE_X)
 		DLGRESIZE_CONTROL(IDC_FULL_SCREEN, DLSZ_MOVE_Y)
+		DLGRESIZE_CONTROL(IDC_ADD_COURSE, DLSZ_MOVE_Y)
+		DLGRESIZE_CONTROL(IDC_DELETE_COURSE, DLSZ_MOVE_Y)
 	END_DLGRESIZE_MAP()
 
 	BEGIN_UPDATE_UI_MAP(CVideoPlayerDlg)
 		UPDATE_ELEMENT(IDC_COURSE_PREV_CHAPTER, UPDUI_CHILDWINDOW)
 		UPDATE_ELEMENT(IDC_COURSE_PLAY, UPDUI_CHILDWINDOW)
 		UPDATE_ELEMENT(IDC_COURSE_NEXT_CHAPTER, UPDUI_CHILDWINDOW)
+		UPDATE_ELEMENT(IDC_SNAPSHOT, UPDUI_CHILDWINDOW)
 		UPDATE_ELEMENT(IDC_MUTE, UPDUI_CHILDWINDOW)
+		UPDATE_ELEMENT(IDC_FULL_SCREEN, UPDUI_CHILDWINDOW)
 		UPDATE_ELEMENT(ID_APP_EXIT, UPDUI_CHILDWINDOW)
+		UPDATE_ELEMENT(IDC_ADD_COURSE, UPDUI_CHILDWINDOW)
+		UPDATE_ELEMENT(IDC_DELETE_COURSE, UPDUI_CHILDWINDOW)
 	END_UPDATE_UI_MAP()
 
 	BEGIN_DDX_MAP(CVideoPlayerDlg)
@@ -220,6 +233,8 @@ public:
 	LRESULT OnCourseListSelChanged(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnCourseChapterListSelChanged(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnCourseChapterListDoubleClicked(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+	LRESULT OnAddCourse(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+	LRESULT OnDeleteCourse(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnCoursePrevChapter(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnCoursePlay(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnCourseNextChapter(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
@@ -257,7 +272,7 @@ private:
 
 	bool IsCourseSelected() const;
 
-	void CreateBitmapButton(int nButtonID, const std::vector<int> &imageIDs, PCTSTR toolTipText, CBitmapButton &bitmapButton);
+	void CreateBitmapButton(int nButtonID, const std::vector<int> &imageIDs, PCTSTR toolTipText, CBitmapButton &bitmapButton, int size = 48);
 
 	void ShowChildWindows(bool isShow);
 
@@ -276,6 +291,9 @@ private:
 	CImageListBoxCtrl m_courseList;
 	CImageList m_courseImageList;
 	//int m_selectCourseIndex;
+	CBitmapButton m_bmpBtnAddCourse;
+	CBitmapButton m_bmpBtnDeleteCourse;
+
 
 	CImageListBoxCtrl m_courseChapterList;
 	//int m_selectCourseChapterIndex;

@@ -18,7 +18,25 @@ void CoursePlayer::VLCEventHandler(const VLCEvent *event, void *userData)
 
 void CoursePlayer::OpenMedia(const tstring &filePath)
 {
-	m_vlcPlayer.OpenMedia(EncodeToUTF8(std::string(CT2A(filePath.data()))).data());
+	m_vlcPlayer.OpenMedia(WCHARToUTF8(filePath.data()).data());
+}
+
+std::string CoursePlayer::WCHARToUTF8(const wchar_t *pwStr) const
+{
+	if (pwStr == NULL)
+	{
+		return "";
+	}
+
+	int len = WideCharToMultiByte(CP_UTF8, 0, pwStr, -1, NULL, 0, NULL, NULL);
+	if (len <= 0)
+	{
+		return "";
+	}
+
+	string sUTF8(len, '\0');
+	WideCharToMultiByte(CP_UTF8, 0, pwStr, -1, &sUTF8[0], len, NULL, NULL);
+	return sUTF8;
 }
 
 std::string CoursePlayer::EncodeToUTF8(const std::string &mbcsStr) const
