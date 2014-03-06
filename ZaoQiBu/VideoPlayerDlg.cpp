@@ -292,9 +292,9 @@ void CVideoPlayerDlg::UpdatePlayTime()
 		mediaLengthTime.GetMinutes(),
 		mediaLengthTime.GetSeconds());
 
-	DoDataExchange(false);
-
 	SetSliderPos(m_hWndMediaTime, (LPARAM)curPos);
+
+	DoDataExchange(false);
 }
 
 void CVideoPlayerDlg::SetSliderPos(HWND hWnd, LPARAM pos)
@@ -503,7 +503,7 @@ void CVideoPlayerDlg::Play()
 void CVideoPlayerDlg::InitMediaTimeControl()
 {
 	SetSliderRange(m_hWndMediaTime, 0, static_cast<DWORD>(m_coursePlayer.GetLength() / 1000));
-	SetSliderPos(m_hWndMediaTime, m_coursePlayer.GetTime() / 1000);
+	SetSliderPos(m_hWndMediaTime, 0);
 }
 
 LRESULT CVideoPlayerDlg::OnCourseNextChapter(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
@@ -564,7 +564,8 @@ LRESULT CVideoPlayerDlg::OnCoursePlayerTimeChanged(UINT /*uMsg*/, WPARAM /*wPara
 {
 	UpdatePlayTime();
 
-	if (m_coursePlayer.IsEnded())
+	if (m_coursePlayer.IsEnded() || 
+		(m_coursePlayer.GetLength()-m_coursePlayer.GetTime())/1000 <= 0)
 	{
 		m_coursePlayer.Stop();
 		PlayCourseNextChapter();
