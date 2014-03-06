@@ -144,7 +144,11 @@ public:
 		m_bmpImage.GetBitmap(&BmpInfo);
 		BLENDFUNCTION bf = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
 		HBITMAP hOldBitmap = dcCompat.SelectBitmap(m_bmpImage);
-		dc.AlphaBlend(0, 0, rcClient.Width(), rcClient.Height(), dcCompat, 0, 0, BmpInfo.bmWidth, BmpInfo.bmHeight, bf);
+
+		SIZE srcSize = { BmpInfo.bmWidth, BmpInfo.bmHeight };
+		SIZE destSize = { rcClient.Width(), rcClient.Height() };
+		CRect rect = CalcDestImageRect(srcSize, destSize);
+		dc.AlphaBlend(rect.left, rect.top, rect.Width(), rect.Height(), dcCompat, 0, 0, BmpInfo.bmWidth, BmpInfo.bmHeight, bf);
 		dcCompat.SelectBitmap(hOldBitmap);
 	}
 

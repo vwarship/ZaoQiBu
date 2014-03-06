@@ -28,9 +28,6 @@
     <Filter Include="VLC">
       <UniqueIdentifier>{6241e410-bcbe-4fd6-b6c1-1f9c8d7b07cd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Controller">
-      <UniqueIdentifier>{6830f512-9139-475f-bbba-9227ca23f91b}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -68,9 +65,6 @@
     </ClCompile>
     <ClCompile Include="VideoPlayerDlg.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CoursePlayerController.cpp">
-      <Filter>Controller</Filter>
     </ClCompile>
     <ClCompile Include="CoursePlayer.cpp">
       <Filter>Controls</Filter>
@@ -136,9 +130,6 @@
     </ClInclude>
     <ClInclude Include="VideoPlayerDlg.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CoursePlayerController.h">
-      <Filter>Controller</Filter>
     </ClInclude>
     <ClInclude Include="CoursePlayer.h">
       <Filter>Controls</Filter>

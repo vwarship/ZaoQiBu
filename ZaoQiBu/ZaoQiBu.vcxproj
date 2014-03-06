@@ -124,7 +124,6 @@
     <ClCompile Include="Convert.cpp" />
     <ClCompile Include="Course.cpp" />
     <ClCompile Include="CoursePlayer.cpp" />
-    <ClCompile Include="CoursePlayerController.cpp" />
     <ClCompile Include="Courses.cpp" />
     <ClCompile Include="CourseUtil.cpp" />
     <ClCompile Include="FileUtil.cpp" />
@@ -145,7 +144,6 @@
     <ClInclude Include="Convert.h" />
     <ClInclude Include="Course.h" />
     <ClInclude Include="CoursePlayer.h" />
-    <ClInclude Include="CoursePlayerController.h" />
     <ClInclude Include="Courses.h" />
     <ClInclude Include="CourseUtil.h" />
     <ClInclude Include="FileUtil.h" />

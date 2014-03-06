@@ -129,33 +129,28 @@ ATLINLINE HBITMAP CreateHoverBitmapWithPNG(HDC hDC, int nID)
 
 ATLINLINE CRect CalcDestImageRect(SIZE srcSize, SIZE destSize)
 {
-	if (srcSize.cx >= destSize.cx || srcSize.cy >= destSize.cy)
+	// 计算出实际宽高和目标宽高的比率
+	double widthRatio = (double)srcSize.cx / destSize.cx;
+	double heightRatio = (double)srcSize.cy / destSize.cy;
+
+	// 选择宽和高中最小的比率作为inSampleSize的值，这样可以保证最终图片的宽和高
+	// 一定都会大于等于目标的宽和高。
+	double ratio = heightRatio > widthRatio ? heightRatio : widthRatio;
+
+	SIZE destRealSize = { (int)(srcSize.cx / ratio), (int)(srcSize.cy / ratio) };
+	CRect destRect = { 0, 0, destSize.cx, destSize.cy };
+	if (heightRatio > widthRatio) //调整宽度
 	{
-		// 计算出实际宽高和目标宽高的比率
-		double widthRatio = (double)srcSize.cx / destSize.cx;
-		double heightRatio = (double)srcSize.cy / destSize.cy;
-
-		// 选择宽和高中最小的比率作为inSampleSize的值，这样可以保证最终图片的宽和高
-		// 一定都会大于等于目标的宽和高。
-		double ratio = heightRatio > widthRatio ? heightRatio : widthRatio;
-
-		SIZE destRealSize = { (int)(srcSize.cx / ratio), (int)(srcSize.cy / ratio) };
-		CRect destRect = { 0, 0, destSize.cx, destSize.cy };
-		if (heightRatio > widthRatio) //调整宽度
-		{
-			int adjustSize = (destRect.Width() - destRealSize.cx) / 2;
-			destRect.DeflateRect(adjustSize, 0);
-		}
-		else
-		{
-			int adjustSize = (destRect.Height() - destRealSize.cy) / 2;
-			destRect.DeflateRect(0, adjustSize);
-		}
-
-		return destRect;
+		int adjustSize = (destRect.Width() - destRealSize.cx) / 2;
+		destRect.DeflateRect(adjustSize, 0);
+	}
+	else
+	{
+		int adjustSize = (destRect.Height() - destRealSize.cy) / 2;
+		destRect.DeflateRect(0, adjustSize);
 	}
 
-	return CRect();
+	return destRect;
 }
 
 ATLINLINE HBITMAP CreateThumbnail(HDC hDC, const CBitmap &bitmap, SIZE thumbnailSize)
