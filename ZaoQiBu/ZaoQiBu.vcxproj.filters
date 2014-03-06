@@ -169,5 +169,7 @@
     <Image Include="res\background.jpg">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\help.png" />
+    <Image Include="res\about.png" />
   </ItemGroup>
 </Project>

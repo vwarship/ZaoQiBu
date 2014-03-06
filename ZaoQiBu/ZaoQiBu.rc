@@ -42,9 +42,23 @@ BEGIN
     LTEXT           "00:00:00",IDC_MEDIA_LENGTH,469,226,33,8
     PUSHBUTTON      "上一章",IDC_COURSE_PREV_CHAPTER,229,241,30,30,0,WS_EX_TRANSPARENT
     PUSHBUTTON      "下一章",IDC_COURSE_NEXT_CHAPTER,289,241,30,30,0,WS_EX_TRANSPARENT
-    ICON            IDR_MAINFRAME,IDC_LOGO,2,0,20,20,SS_REALSIZEIMAGE
+    ICON            IDR_MAINFRAME,IDC_LOGO,2,0,20,20,SS_REALSIZEIMAGE,WS_EX_TRANSPARENT
     PUSHBUTTON      "add course",IDC_ADD_COURSE,71,253,20,20,NOT WS_VISIBLE,WS_EX_TRANSPARENT
     PUSHBUTTON      "add course",IDC_DELETE_COURSE,92,253,20,20,NOT WS_VISIBLE,WS_EX_TRANSPARENT
+    PUSHBUTTON      "帮助",ID_APP_ABOUT,440,3,30,30,0,WS_EX_TRANSPARENT
+END
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 313, 205
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "关于 早起步"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,256,184,50,14
+    LTEXT           "早起步 儿童教育软件\n版本 1.0.1\n(C) 2014 王军建",IDC_STATIC,93,17,102,28
+    ICON            IDR_MAINFRAME,IDC_STATIC,7,7,21,20,SS_REALSIZEIMAGE
+    LTEXT           "播放/暂停     空格\n\n上一课          Page Up\n\n下一课          Page Down",IDC_STATIC,37,86,104,47
+    LTEXT           "快照          F12\n\n全屏          F11\n\n关于          F1",IDC_STATIC,194,86,60,47
+    GROUPBOX        "快捷键",IDC_STATIC,26,65,260,71
 END
 
 
@@ -58,6 +72,14 @@ GUIDELINES DESIGNINFO
 BEGIN
     IDD_VIDEOPLAYER, DIALOG
     BEGIN
+    END
+
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 306
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 198
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -81,6 +103,7 @@ IDB_SOUND_OFF           PNG                     "res\\sound_off.png"
 IDB_SOUND_ON            PNG                     "res\\sound_on.png"
 IDB_ADD_COURSE          PNG                     "res\\add_course.png"
 IDB_DELETE_COURSE       PNG                     "res\\delete_course.png"
+IDB_ABOUT               PNG                     "res\\about.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -167,42 +190,6 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\ZaoQiBu.ico"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_ABOUTBOX DIALOG 0, 0, 187, 102
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "About"
-FONT 8, "MS Shell Dlg"
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,130,81,50,14
-    CTEXT           "ZaoQiBu Application v1.0\n\n(c) Copyright 2014",IDC_STATIC,25,57,78,32
-    ICON            IDR_MAINFRAME,IDC_STATIC,55,26,18,20
-    GROUPBOX        "",IDC_STATIC,7,7,115,88
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO
-BEGIN
-    IDD_ABOUTBOX, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 180
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 95
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
 
 /////////////////////////////////////////////////////////////////////////////
 //

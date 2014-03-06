@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "VideoPlayerDlg.h"
 #include "CourseUtil.h"
+#include "aboutdlg.h"
 
 CVideoPlayerDlg::CVideoPlayerDlg()
 : m_isFullScreen(false)
@@ -30,6 +31,10 @@ BOOL CVideoPlayerDlg::PreTranslateMessage(MSG* pMsg)
 		if (pMsg->wParam == VK_ESCAPE)
 		{
 			FullScreen(false);
+		}
+		else if (pMsg->wParam == VK_F1)
+		{
+			SendMessage(WM_COMMAND, MAKEWPARAM(ID_APP_ABOUT, BN_CLICKED), 0);
 		}
 		else if (pMsg->wParam == VK_F11)
 		{
@@ -107,6 +112,7 @@ LRESULT CVideoPlayerDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /
 	CreateBitmapButton(IDC_ADD_COURSE, { IDB_ADD_COURSE }, _T("增加课程"), m_bmpBtnAddCourse, 32);
 	CreateBitmapButton(IDC_DELETE_COURSE, { IDB_DELETE_COURSE }, _T("删除课程"), m_bmpBtnDeleteCourse, 32);
 
+	CreateBitmapButton(ID_APP_ABOUT, { IDB_ABOUT }, _T("帮助 热键:F1"), m_bmpBtnHelp);
 	CreateBitmapButton(ID_APP_EXIT, { IDB_APP_EXIT }, _T("退出"), m_bmpBtnAppExit);
 	CreateBitmapButton(IDC_COURSE_PREV_CHAPTER, { IDB_COURSE_PREV_CHAPTER }, _T("上一章 热键:Page Up"), m_bmpBtnCoursePrevChapter);
 	CreateBitmapButton(IDC_COURSE_PLAY, { IDB_COURSE_PLAY, IDB_COURSE_PAUSE }, _T("播放 热键:空格"), m_bmpBtnPlay);
@@ -329,6 +335,7 @@ void CVideoPlayerDlg::ShowChildWindows(bool isShow)
 {
 	static const int windowIDs[] = {
 		IDC_LOGO,
+		ID_APP_ABOUT,
 		ID_APP_EXIT,
 		IDC_COURSE_LIST,
 		IDC_COURSE_ITEM_LIST,
@@ -548,6 +555,15 @@ LRESULT CVideoPlayerDlg::OnFullScreen(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /
 {
 	UIEnable(IDC_FULL_SCREEN, !m_bmpBtnFullScreen.IsWindowEnabled());
 	FullScreen(true);
+	return 0;
+}
+
+LRESULT CVideoPlayerDlg::OnAbout(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	UIEnable(ID_APP_ABOUT, !m_bmpBtnHelp.IsWindowEnabled());
+	CAboutDlg dlg;
+	dlg.DoModal();
+
 	return 0;
 }
 

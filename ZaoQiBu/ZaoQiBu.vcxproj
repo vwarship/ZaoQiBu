@@ -165,6 +165,7 @@
     <ResourceCompile Include="ZaoQiBu.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\about.png" />
     <Image Include="res\add_course.png" />
     <Image Include="res\app_exit.png" />
     <Image Include="res\background.jpg" />
@@ -175,6 +176,7 @@
     <Image Include="res\course_prev.png" />
     <Image Include="res\delete_course.png" />
     <Image Include="res\full_screen.png" />
+    <Image Include="res\help.png" />
     <Image Include="res\logo.png" />
     <Image Include="res\snapshot.png" />
     <Image Include="res\sound_off.png" />

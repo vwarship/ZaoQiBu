@@ -18,8 +18,9 @@
 #define IDB_SOUND_ON                    215
 #define IDB_ADD_COURSE                  216
 #define IDB_DELETE_COURSE               217
-#define IDR_JPG1                        219
 #define IDB_BACKGROUND                  219
+#define IDB_HELP                        220
+#define IDB_ABOUT                       220
 #define ID_VIEW_VIDEOPLAYER             1000
 #define IDC_COURSE_LIST                 1000
 #define IDC_COURSE_ITEM_LIST            1001
@@ -42,9 +43,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        220
+#define _APS_NEXT_RESOURCE_VALUE        222
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1019
+#define _APS_NEXT_CONTROL_VALUE         1020
 #define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif
