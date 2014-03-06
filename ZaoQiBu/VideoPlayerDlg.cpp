@@ -275,11 +275,11 @@ void CVideoPlayerDlg::CreateBitmapButton(int nButtonID, const std::vector<int> &
 
 void CVideoPlayerDlg::UpdatePlayTime()
 {
-	int64_t curPos = m_coursePlayer.GetTime();
-	int64_t mediaLength = m_coursePlayer.GetLength();
+	int64_t curPos = m_coursePlayer.GetTime() / 1000;
+	int64_t mediaLength = m_coursePlayer.GetLength() / 1000;
 
-	CTimeSpan curPosTime(static_cast<time_t>(curPos / 1000));
-	CTimeSpan mediaLengthTime(static_cast<time_t>(mediaLength / 1000));
+	CTimeSpan curPosTime(static_cast<time_t>(curPos));
+	CTimeSpan mediaLengthTime(static_cast<time_t>(mediaLength));
 
 	static PCTSTR TIME_FORMAT = _T("%02d:%02d:%02d");
 	m_sMediaCurrentTime.Format(TIME_FORMAT,
@@ -292,9 +292,9 @@ void CVideoPlayerDlg::UpdatePlayTime()
 		mediaLengthTime.GetMinutes(),
 		mediaLengthTime.GetSeconds());
 
-	SetSliderPos(m_hWndMediaTime, (LPARAM)curPos / 1000);
-
 	DoDataExchange(false);
+
+	SetSliderPos(m_hWndMediaTime, (LPARAM)curPos);
 }
 
 void CVideoPlayerDlg::SetSliderPos(HWND hWnd, LPARAM pos)
@@ -481,7 +481,7 @@ void CVideoPlayerDlg::Play()
 		m_coursePlayer.OpenMedia(selectedFilename);
 		m_coursePlayer.Play();
 
-		Sleep(100);
+		Sleep(500);
 
 		InitMediaTimeControl();
 		m_bmpBtnPlay.SetImages(2, -1, 3);
@@ -503,7 +503,7 @@ void CVideoPlayerDlg::Play()
 void CVideoPlayerDlg::InitMediaTimeControl()
 {
 	SetSliderRange(m_hWndMediaTime, 0, static_cast<DWORD>(m_coursePlayer.GetLength() / 1000));
-	SetSliderPos(m_hWndMediaTime, 0);
+	SetSliderPos(m_hWndMediaTime, m_coursePlayer.GetTime() / 1000);
 }
 
 LRESULT CVideoPlayerDlg::OnCourseNextChapter(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
