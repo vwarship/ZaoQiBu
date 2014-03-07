@@ -337,6 +337,8 @@ void CVideoPlayerDlg::ShowChildWindows(bool isShow)
 		ID_APP_ABOUT,
 		ID_APP_EXIT,
 		IDC_COURSE_LIST,
+		IDC_ADD_COURSE,
+		IDC_DELETE_COURSE,
 		IDC_COURSE_ITEM_LIST,
 		IDC_COURSE_PREV_CHAPTER,
 		IDC_COURSE_PLAY,
@@ -582,7 +584,7 @@ LRESULT CVideoPlayerDlg::OnCoursePlayerTimeChanged(UINT /*uMsg*/, WPARAM /*wPara
 	if (m_coursePlayer.IsEnded() || 
 		(m_coursePlayer.GetLength()-m_coursePlayer.GetTime())/1000 <= 0)
 	{
-		m_coursePlayer.Stop();
+		//m_coursePlayer.Stop();
 		PlayCourseNextChapter();
 	}
 
