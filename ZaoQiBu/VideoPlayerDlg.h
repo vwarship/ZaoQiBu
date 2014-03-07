@@ -50,6 +50,11 @@ public:
 		m_courses->AddCourse(course);
 	}
 
+	void RemoveCourse(size_t index)
+	{
+		m_courses->RemoveCourse(index);
+	}
+
 	const Chapter& GetCurrentChapter() const
 	{
 		return m_course->GetChapter(m_currentChapterIndex);

@@ -9,6 +9,12 @@ public:
 		m_courses.push_back(course);
 	}
 
+	void RemoveCourse(size_t index)
+	{
+		if (index < m_courses.size())
+			m_courses.erase(m_courses.begin() + index);
+	}
+
 	shared_ptr<Course> GetCourse(size_t index)
 	{
 		if (index < m_courses.size())

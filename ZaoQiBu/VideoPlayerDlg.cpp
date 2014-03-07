@@ -88,6 +88,8 @@ LRESULT CVideoPlayerDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /
 	m_courseList.SetItemHeight(0, 70);
 
 	m_courseImageList.Create(80, 64, TRUE | ILC_COLOR32, 1, 1);
+	m_courseList.SetImageList(m_courseImageList.m_hImageList, ILSIL_NORMAL);
+	m_courseList.SetImageList(m_courseImageList.m_hImageList, ILSIL_SELECTED);
 
 	m_courseChapterList.SubclassWindow(GetDlgItem(IDC_COURSE_ITEM_LIST));
 	m_courseChapterList.SetItemHeight(0, 30);
@@ -175,9 +177,6 @@ void CVideoPlayerDlg::AddCourseImage(LPCTSTR pszImageFilename)
 	m_courseImageList.GetIconSize(thumbnailSize);
 	HBITMAP hBitmapThumbnail = CreateThumbnail(GetDC(), bitmap, thumbnailSize);
 	m_courseImageList.Add(hBitmapThumbnail);
-
-	m_courseList.SetImageList(m_courseImageList.m_hImageList, ILSIL_NORMAL);
-	m_courseList.SetImageList(m_courseImageList.m_hImageList, ILSIL_SELECTED);
 }
 
 HBITMAP CVideoPlayerDlg::LoadBitmapWithPNG(int nID)
@@ -640,6 +639,35 @@ LRESULT CVideoPlayerDlg::OnAddCourse(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*
 LRESULT CVideoPlayerDlg::OnDeleteCourse(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
 	UIEnable(IDC_DELETE_COURSE, !m_bmpBtnDeleteCourse.IsWindowEnabled());
+
+	size_t curIndex = m_courseList.GetCurSel();
+	m_playlist.RemoveCourse(curIndex);
+
+	//PILBITEM pItem = (PILBITEM)m_courseList.GetItemDataPtr(curIndex);
+	//DELETEITEMSTRUCT dis = { 0 };
+	//dis.itemData = reinterpret_cast<ULONG_PTR>(pItem);
+	//m_courseList.DeleteItem(&dis);
+
+	m_courseList.DeleteString(curIndex);
+	m_courseImageList.Remove(curIndex);
+
+	int courseCount = m_courseList.GetCount();
+	for (int i = curIndex; i < courseCount; ++i)
+	{
+		ILBITEM item = { 0 };
+		item.mask = ILBIF_IMAGE | ILBIF_SELIMAGE;
+		item.iItem = i;
+		m_courseList.GetItem(&item);
+		item.iImage = i;
+		item.iSelImage = i;
+
+		m_courseList.SetItem(&item);
+	}
+
+	if (curIndex < m_courseList.GetCount())
+		SetCurrentCourseIndex(curIndex);
+	else
+		SetCurrentCourseIndex(curIndex-1);
 
 	return 0;
 }
