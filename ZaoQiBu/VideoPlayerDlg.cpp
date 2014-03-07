@@ -82,6 +82,9 @@ LRESULT CVideoPlayerDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /
 {
 	CenterWindow(GetParent());
 
+	m_titleCtrl.SubclassWindow(GetDlgItem(IDC_TITLE));
+	m_titleCtrl.SetBitmap(LoadBitmapWithPNG(IDB_TITLE));
+
 	m_coursePlayer.SetBitmap(IDB_BACKGROUND, _T("JPG"));
 
 	m_courseList.SubclassWindow(GetDlgItem(IDC_COURSE_LIST));
@@ -336,6 +339,7 @@ void CVideoPlayerDlg::ShowChildWindows(bool isShow)
 		IDC_LOGO,
 		ID_APP_ABOUT,
 		ID_APP_EXIT,
+		IDC_TITLE,
 		IDC_COURSE_LIST,
 		IDC_ADD_COURSE,
 		IDC_DELETE_COURSE,

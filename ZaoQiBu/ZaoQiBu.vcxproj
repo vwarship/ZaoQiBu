@@ -181,10 +181,16 @@
     <Image Include="res\snapshot.png" />
     <Image Include="res\sound_off.png" />
     <Image Include="res\sound_on.png" />
+    <Image Include="res\title.png" />
     <Image Include="res\toolbar.bmp" />
     <Image Include="res\ZaoQiBu.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="ZaoQiBu.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

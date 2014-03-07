@@ -10,6 +10,7 @@
 #include "ImageListBox.h"
 #include "CoursePlayer.h"
 #include "FileUtil.h"
+#include "ThemedImage.h"
 
 using std::vector;
 using std::string;
@@ -297,6 +298,8 @@ private:
 	void SetSliderRange(HWND hWnd, DWORD start, DWORD end);
 
 private:
+	CThemedImageCtrl m_titleCtrl;
+
 	CImageListBoxCtrl m_courseList;
 	CImageList m_courseImageList;
 	//int m_selectCourseIndex;

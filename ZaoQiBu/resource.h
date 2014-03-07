@@ -21,6 +21,7 @@
 #define IDB_BACKGROUND                  219
 #define IDB_HELP                        220
 #define IDB_ABOUT                       220
+#define IDB_TITLE                       222
 #define ID_VIEW_VIDEOPLAYER             1000
 #define IDC_COURSE_LIST                 1000
 #define IDC_COURSE_ITEM_LIST            1001
@@ -38,14 +39,15 @@
 #define IDC_LOGO                        1015
 #define IDC_ADD_COURSE                  1018
 #define IDC_DELETE_COURSE               1020
+#define IDC_TITLE                       1022
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        222
+#define _APS_NEXT_RESOURCE_VALUE        223
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1020
+#define _APS_NEXT_CONTROL_VALUE         1023
 #define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif
