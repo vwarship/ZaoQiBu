@@ -39,7 +39,7 @@
 #define IDC_LOGO                        1015
 #define IDC_ADD_COURSE                  1018
 #define IDC_DELETE_COURSE               1020
-#define IDC_TITLE                       1022
+#define IDC_TITLE                       1021
 
 // Next default values for new objects
 // 

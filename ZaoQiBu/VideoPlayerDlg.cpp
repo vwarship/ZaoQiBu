@@ -82,8 +82,12 @@ LRESULT CVideoPlayerDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /
 {
 	CenterWindow(GetParent());
 
-	m_titleCtrl.SubclassWindow(GetDlgItem(IDC_TITLE));
-	m_titleCtrl.SetBitmap(LoadBitmapWithPNG(IDB_TITLE));
+	m_bmpBtnTitle.SubclassWindow(GetDlgItem(IDC_TITLE));
+	CImageList imageList;
+	imageList.Create(173, 72, TRUE | ILC_COLOR32, 1, 1);
+	imageList.Add(LoadBitmapWithPNG(IDB_TITLE));
+	m_bmpBtnTitle.SetImageList(imageList);
+	m_bmpBtnTitle.SetImages(0);
 
 	m_coursePlayer.SetBitmap(IDB_BACKGROUND, _T("JPG"));
 
