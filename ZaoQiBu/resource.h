@@ -40,6 +40,8 @@
 #define IDC_ADD_COURSE                  1018
 #define IDC_DELETE_COURSE               1020
 #define IDC_TITLE                       1021
+#define IDC_SOURCE_CODE                 1023
+#define IDC_SOURCE_CODE_LINK            1023
 
 // Next default values for new objects
 // 
@@ -47,7 +49,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        223
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1023
+#define _APS_NEXT_CONTROL_VALUE         1024
 #define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif

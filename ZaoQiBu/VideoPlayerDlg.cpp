@@ -154,6 +154,9 @@ LRESULT CVideoPlayerDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /
 
 	m_coursePlayer.SubclassWindow(GetDlgItem(IDC_COURSE_PLAYER));
 
+	m_linkSourceCode.SubclassWindow(GetDlgItem(IDC_SOURCE_CODE_LINK));
+	m_linkSourceCode.SetHyperLink(_T("https://github.com/vwarship/ZaoQiBu"));
+
 	CreateBitmapButton(IDC_ADD_COURSE, { IDB_ADD_COURSE }, _T("增加课程"), m_bmpBtnAddCourse, 32);
 	CreateBitmapButton(IDC_DELETE_COURSE, { IDB_DELETE_COURSE }, _T("删除课程"), m_bmpBtnDeleteCourse, 32);
 

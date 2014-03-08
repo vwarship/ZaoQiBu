@@ -209,6 +209,7 @@ public:
 		DLGRESIZE_CONTROL(IDC_FULL_SCREEN, DLSZ_MOVE_Y)
 		DLGRESIZE_CONTROL(IDC_ADD_COURSE, DLSZ_MOVE_Y)
 		DLGRESIZE_CONTROL(IDC_DELETE_COURSE, DLSZ_MOVE_Y)
+		DLGRESIZE_CONTROL(IDC_SOURCE_CODE_LINK, DLSZ_MOVE_Y)
 	END_DLGRESIZE_MAP()
 
 	BEGIN_UPDATE_UI_MAP(CVideoPlayerDlg)
@@ -311,6 +312,7 @@ private:
 
 	CoursePlayer m_coursePlayer;
 
+	CHyperLink m_linkSourceCode;
 	CBitmapButton m_bmpBtnHelp;
 	CBitmapButton m_bmpBtnAppExit;
 	CBitmapButton m_bmpBtnCoursePrevChapter;

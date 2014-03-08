@@ -47,6 +47,7 @@ BEGIN
     PUSHBUTTON      "delete course",IDC_DELETE_COURSE,92,253,20,20,0,WS_EX_TRANSPARENT
     PUSHBUTTON      "帮助",ID_APP_ABOUT,440,3,30,30,0,WS_EX_TRANSPARENT
     PUSHBUTTON      "标题",IDC_TITLE,32,0,20,20,WS_DISABLED | NOT WS_TABSTOP,WS_EX_TRANSPARENT
+    LTEXT           "早起步源代码",IDC_SOURCE_CODE_LINK,2,260,46,8
 END
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 313, 205
@@ -60,6 +61,7 @@ BEGIN
     LTEXT           "播放/暂停     空格\n\n上一课          Page Up\n\n下一课          Page Down",IDC_STATIC,37,86,104,47
     LTEXT           "快照          F12\n\n全屏          F11\n\n关于          F1",IDC_STATIC,194,86,60,47
     GROUPBOX        "快捷键",IDC_STATIC,26,65,260,71
+    LTEXT           "源代码: https://github.com/vwarship/ZaoQiBu",IDC_STATIC,26,150,170,8
 END
 
 
