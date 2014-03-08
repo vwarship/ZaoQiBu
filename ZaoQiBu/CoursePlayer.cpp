@@ -39,7 +39,7 @@ std::string CoursePlayer::WCHARToUTF8(const wchar_t *pwStr) const
 	return sUTF8;
 }
 
-std::string CoursePlayer::EncodeToUTF8(const std::string &mbcsStr) const
+std::string CoursePlayer::CHARToUTF8(const std::string &mbcsStr) const
 {
 	int len = MultiByteToWideChar(CP_UTF8, 0, &mbcsStr[0], -1, NULL, 0);
 

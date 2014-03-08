@@ -78,6 +78,41 @@ BOOL CVideoPlayerDlg::OnIdle()
 	return FALSE;
 }
 
+class Background
+{
+public:
+	Background()
+	{
+		m_hInstBkgRes = LoadLibrary(_T("BkgRes.dll"));
+	}
+
+	HBITMAP GetBitmap()
+	{
+		if (m_hInstBkgRes)
+		{
+			HBITMAP hBitmap = LoadBitmap(m_hInstBkgRes, MAKEINTRESOURCE(101));
+			if (hBitmap)
+				return hBitmap;
+		}
+
+		return GetDefaultBackground();
+	}
+
+	~Background()
+	{
+		FreeLibrary(m_hInstBkgRes);
+	}
+
+private:
+	HBITMAP GetDefaultBackground() const
+	{
+		return AtlLoadGdiplusImage(IDB_BACKGROUND, _T("JPG"));
+	}
+
+private:
+	HINSTANCE m_hInstBkgRes = NULL;
+
+};
 LRESULT CVideoPlayerDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
 	CenterWindow(GetParent());
@@ -89,7 +124,8 @@ LRESULT CVideoPlayerDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /
 	m_bmpBtnTitle.SetImageList(imageList);
 	m_bmpBtnTitle.SetImages(0);
 
-	m_coursePlayer.SetBitmap(IDB_BACKGROUND, _T("JPG"));
+	Background background;
+	m_coursePlayer.SetBitmap(background.GetBitmap());
 
 	m_courseList.SubclassWindow(GetDlgItem(IDC_COURSE_LIST));
 	m_courseList.SetItemHeight(0, 70);

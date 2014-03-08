@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZaoQiBu", "ZaoQiBu\ZaoQiBu.vcxproj", "{A1D0C743-9029-43C1-A1D2-57006262AEA3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BkgRes", "BkgRes\BkgRes.vcxproj", "{9D356C42-E6B0-43F7-AD21-26B62AA64E75}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,6 +17,10 @@ Global
 		{A1D0C743-9029-43C1-A1D2-57006262AEA3}.Debug|Win32.Build.0 = Debug|Win32
 		{A1D0C743-9029-43C1-A1D2-57006262AEA3}.Release|Win32.ActiveCfg = Release|Win32
 		{A1D0C743-9029-43C1-A1D2-57006262AEA3}.Release|Win32.Build.0 = Release|Win32
+		{9D356C42-E6B0-43F7-AD21-26B62AA64E75}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9D356C42-E6B0-43F7-AD21-26B62AA64E75}.Debug|Win32.Build.0 = Debug|Win32
+		{9D356C42-E6B0-43F7-AD21-26B62AA64E75}.Release|Win32.ActiveCfg = Release|Win32
+		{9D356C42-E6B0-43F7-AD21-26B62AA64E75}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

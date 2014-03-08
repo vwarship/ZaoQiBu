@@ -63,6 +63,7 @@ public:
 	void SetBitmap(HBITMAP hBitmap)
 	{
 		m_bmpImage = (HBITMAP) ::CopyImage(hBitmap, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
+		//m_bmpImage.Attach(hBitmap);
 		if (IsWindow()) Invalidate();
 	}
 
@@ -137,23 +138,23 @@ public:
 		dc.PatBlt(rcClient.left, rcClient.top, rcClient.Width(), rcClient.Height(), PATCOPY);
 		dc.SelectBrush(hOldBrush);
 
-		// Paint image (assume that it is a 32bit with alpha-pr-pixel)...
+		// Paint image (assume that it is a 32bit witah alpha-pr-pixel)...
 		CDC dcCompat;
 		dcCompat.CreateCompatibleDC(dc);
 		BITMAP BmpInfo = { 0 };
 		m_bmpImage.GetBitmap(&BmpInfo);
-		BLENDFUNCTION bf = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
 		HBITMAP hOldBitmap = dcCompat.SelectBitmap(m_bmpImage);
 
 		SIZE srcSize = { BmpInfo.bmWidth, BmpInfo.bmHeight };
 		SIZE destSize = { rcClient.Width(), rcClient.Height() };
 		CRect rect = CalcDestImageRect(srcSize, destSize);
-		dc.AlphaBlend(rect.left, rect.top, rect.Width(), rect.Height(), dcCompat, 0, 0, BmpInfo.bmWidth, BmpInfo.bmHeight, bf);
+		dc.SetStretchBltMode(HALFTONE);
+		dc.StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(), dcCompat, 0, 0, BmpInfo.bmWidth, BmpInfo.bmHeight, SRCCOPY);
 		dcCompat.SelectBitmap(hOldBitmap);
 	}
 
 private:
-	std::string EncodeToUTF8(const std::string &mbcsStr) const;
+	std::string CHARToUTF8(const std::string &mbcsStr) const;
 	std::string WCHARToUTF8(const wchar_t *pwStr) const;
 
 private:
