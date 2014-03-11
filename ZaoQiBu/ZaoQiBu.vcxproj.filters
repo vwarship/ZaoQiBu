@@ -72,6 +72,9 @@
     <ClCompile Include="Config.cpp">
       <Filter>Util</Filter>
     </ClCompile>
+    <ClCompile Include="Playlist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -139,6 +142,9 @@
     </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Playlist.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

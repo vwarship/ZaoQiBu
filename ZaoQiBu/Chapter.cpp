@@ -22,6 +22,16 @@ void Chapter::SetStartTime(int startTime)
 	m_startTime = startTime;
 }
 
+int Chapter::GetEndTime() const
+{
+	return m_endTime;
+}
+
+void Chapter::SetEndTime(int endTime)
+{
+	m_endTime = endTime;
+}
+
 tstring Chapter::GetTitle() const
 {
 	return FileUtil::GetFileName(GetFilePath());

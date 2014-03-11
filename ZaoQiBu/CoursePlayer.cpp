@@ -91,7 +91,8 @@ bool CoursePlayer::IsStopped()
 
 bool CoursePlayer::IsEnded()
 {
-	return m_vlcPlayer.GetMediaState() == Ended;
+	return (m_vlcPlayer.GetMediaState() == Ended ||
+		(GetLength() - GetTime()) / 1000 <= 0);	//有些视频不能返回结束状态
 }
 
 bool CoursePlayer::IsError()

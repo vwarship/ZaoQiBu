@@ -396,6 +396,7 @@ void CVideoPlayerDlg::ShowChildWindows(bool isShow)
 		IDC_MEDIA_CURRENT_TIME,
 		IDC_MEDIA_TIME,
 		IDC_MEDIA_LENGTH,
+		IDC_SOURCE_CODE_LINK
 	};
 
 	for (int nID : windowIDs)
@@ -551,7 +552,6 @@ void CVideoPlayerDlg::Play()
 	else
 	{
 		//更新画面
-
 	}
 }
 
@@ -628,8 +628,9 @@ LRESULT CVideoPlayerDlg::OnCoursePlayerTimeChanged(UINT /*uMsg*/, WPARAM /*wPara
 {
 	UpdatePlayTime();
 
-	if (m_coursePlayer.IsEnded() || 
-		(m_coursePlayer.GetLength()-m_coursePlayer.GetTime())/1000 <= 0)
+	const Chapter& currentChapter = m_playlist.GetCurrentChapter();
+	if ( m_coursePlayer.IsEnded() ||
+		(currentChapter.GetEndTime()>0 && m_coursePlayer.GetTime() >= currentChapter.GetEndTime()) )	//如果设置了结束标记
 	{
 		//m_coursePlayer.Stop();
 		PlayCourseNextChapter();

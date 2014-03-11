@@ -44,8 +44,9 @@ shared_ptr<Course> CourseUtil::Create(const tstring &courseFilename)
 		tstring filename = node.attribute(_T("src")).as_string();
 		tstring chapterFilePath = FileUtil::GetFileFullPathName(courseDir, filename);
 		int startTime = node.attribute(_T("startTime")).as_int();
+		int endTime = node.attribute(_T("endTime")).as_int();
 
-		course->AddChapter(Chapter(chapterFilePath, startTime));
+		course->AddChapter(Chapter(chapterFilePath, startTime, endTime));
 	}
 
 	return course;

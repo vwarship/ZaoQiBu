@@ -53,12 +53,12 @@ public:
 	void SetMute(bool mute = true);
 	bool GetMute();
 
-	//void SetThemeParent(HWND hWnd)
-	//{
-	//	ATLASSERT(::IsWindow(hWnd));
-	//	m_wndThemeParent = hWnd;
-	//	if (!m_brBack.IsNull()) m_brBack.DeleteObject();
-	//}
+	void SetThemeParent(HWND hWnd)
+	{
+		ATLASSERT(::IsWindow(hWnd));
+		m_wndThemeParent = hWnd;
+		if (!m_brBack.IsNull()) m_brBack.DeleteObject();
+	}
 
 	void SetBitmap(HBITMAP hBitmap)
 	{
@@ -133,8 +133,8 @@ public:
 		GetClientRect(&rcClient);
 
 		// Preserve background
-		if (m_brBack.IsNull()) m_brBack = AtlGetBackgroundBrush(m_hWnd, m_wndThemeParent);
-		HBRUSH hOldBrush = dc.SelectBrush(m_brBack);
+		//if (m_brBack.IsNull()) m_brBack = AtlGetBackgroundBrush(m_hWnd, m_wndThemeParent);
+		HBRUSH hOldBrush = dc.SelectBrush(static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)));
 		dc.PatBlt(rcClient.left, rcClient.top, rcClient.Width(), rcClient.Height(), PATCOPY);
 		dc.SelectBrush(hOldBrush);
 
@@ -143,13 +143,14 @@ public:
 		dcCompat.CreateCompatibleDC(dc);
 		BITMAP BmpInfo = { 0 };
 		m_bmpImage.GetBitmap(&BmpInfo);
-		HBITMAP hOldBitmap = dcCompat.SelectBitmap(m_bmpImage);
 
 		SIZE srcSize = { BmpInfo.bmWidth, BmpInfo.bmHeight };
 		SIZE destSize = { rcClient.Width(), rcClient.Height() };
 		CRect rect = CalcDestImageRect(srcSize, destSize);
+
+		HBITMAP hOldBitmap = dcCompat.SelectBitmap(m_bmpImage);
 		dc.SetStretchBltMode(HALFTONE);
-		dc.StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(), dcCompat, 0, 0, BmpInfo.bmWidth, BmpInfo.bmHeight, SRCCOPY);
+		dc.StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(), dcCompat, 0, 0, srcSize.cx, srcSize.cy, SRCCOPY);
 		dcCompat.SelectBitmap(hOldBitmap);
 	}
 
