@@ -37,6 +37,8 @@ public:
 		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
 		MESSAGE_HANDLER(WM_APPCOMMAND, OnAppCommand)
 		MESSAGE_HANDLER(WM_HSCROLL, OnHScroll)
+		MESSAGE_HANDLER(WM_CTLCOLORDLG, OnCtrlColor)
+		MESSAGE_HANDLER(WM_CTLCOLORSTATIC, OnCtrlColor)
 		COMMAND_HANDLER(IDC_COURSE_LIST, LBN_SELCHANGE, OnCourseListSelChanged)
 		COMMAND_HANDLER(IDC_COURSE_ITEM_LIST, LBN_SELCHANGE, OnCourseChapterListSelChanged)
 		COMMAND_HANDLER(IDC_COURSE_ITEM_LIST, LBN_DBLCLK, OnCourseChapterListDoubleClicked)
@@ -115,7 +117,7 @@ public:
 	
 	LRESULT OnAppCommand(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BOOL& /*bHandled*/);
 	LRESULT OnHScroll(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-	LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+	LRESULT OnCtrlColor(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& /*bHandled*/);
 	LRESULT OnCourseListSelChanged(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnCourseChapterListSelChanged(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnCourseChapterListDoubleClicked(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
@@ -175,6 +177,7 @@ private:
 	void SetSliderRange(HWND hWnd, DWORD start, DWORD end);
 
 private:
+	HBRUSH m_hBrushBackgroundColor = NULL;
 	CBitmapButton m_bmpBtnTitle;
 
 	CImageListBoxCtrl m_courseList;

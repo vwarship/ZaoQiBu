@@ -458,6 +458,16 @@ LRESULT CVideoPlayerDlg::OnHScroll(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 	return 0;
 }
 
+LRESULT CVideoPlayerDlg::OnCtrlColor(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& /*bHandled*/)
+{
+	if (!m_hBrushBackgroundColor)
+		m_hBrushBackgroundColor = ::CreateSolidBrush(RGB(235, 248, 164));
+
+	SetBkMode((HDC)wParam, TRANSPARENT);
+
+	return (LRESULT)m_hBrushBackgroundColor;
+}
+
 LRESULT CVideoPlayerDlg::OnCourseListSelChanged(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
 	//避免对当前已经选中的课程重复响应

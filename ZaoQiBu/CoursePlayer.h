@@ -146,11 +146,12 @@ public:
 
 		SIZE srcSize = { BmpInfo.bmWidth, BmpInfo.bmHeight };
 		SIZE destSize = { rcClient.Width(), rcClient.Height() };
-		CRect rect = CalcDestImageRect(srcSize, destSize);
+		CRect drawRect = CalcDestImageRect(srcSize, destSize);
 
 		HBITMAP hOldBitmap = dcCompat.SelectBitmap(m_bmpImage);
 		dc.SetStretchBltMode(HALFTONE);
-		dc.StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(), dcCompat, 0, 0, srcSize.cx, srcSize.cy, SRCCOPY);
+		dc.StretchBlt(drawRect.left, drawRect.top, drawRect.Width(), drawRect.Height(), 
+			dcCompat, 0, 0, srcSize.cx, srcSize.cy, SRCCOPY);
 		dcCompat.SelectBitmap(hOldBitmap);
 	}
 
