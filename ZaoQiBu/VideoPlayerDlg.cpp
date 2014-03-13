@@ -446,6 +446,7 @@ LRESULT CVideoPlayerDlg::OnHScroll(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 		case SB_PAGEUP:
 		case SB_PAGEDOWN:
 			m_coursePlayer.SetVolume(nPos);
+			m_playlist.SetVolume(nPos);
 			if (nPos == 0)
 				m_bmpBtnMute.SetImages(2, -1, 3);
 			else
@@ -461,7 +462,7 @@ LRESULT CVideoPlayerDlg::OnHScroll(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 LRESULT CVideoPlayerDlg::OnCtrlColor(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& /*bHandled*/)
 {
 	if (!m_hBrushBackgroundColor)
-		m_hBrushBackgroundColor = ::CreateSolidBrush(RGB(235, 248, 164));
+		m_hBrushBackgroundColor = ::CreateSolidBrush(RGB(235, 248, 164));	//RGB(255, 229, 126)
 
 	SetBkMode((HDC)wParam, TRANSPARENT);
 
@@ -558,6 +559,7 @@ void CVideoPlayerDlg::Play()
 		//m_playlist.SetCurrentChapterIndex(m_courseChapterList.GetCurSel());
 
 		m_coursePlayer.SetTime(currentChapter.GetStartTime());
+		m_coursePlayer.SetVolume(m_playlist.GetVolume());
 	}
 	else
 	{
