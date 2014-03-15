@@ -29,6 +29,11 @@ shared_ptr<Course> Playlist::GetCourse() const
 	return m_course;
 }
 
+const shared_ptr<Course> Playlist::GetCourseByIndex(size_t index) const
+{
+	return m_courses->GetCourse(index);
+}
+
 void Playlist::AddCourse(shared_ptr<Course> course)
 {
 	m_courses->AddCourse(course);
@@ -69,6 +74,16 @@ int Playlist::GetLastPlayChapterTime()
 	}
 
 	return 0;
+}
+
+int Playlist::GetLastPlayChapterIndex() const
+{
+	if (m_course)
+	{
+		return m_course->GetPlayRecord().GetLastPlayChapterIndex();
+	}
+
+	return -1;
 }
 
 int Playlist::GetLastPlayCourseIndex() const

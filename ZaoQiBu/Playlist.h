@@ -12,6 +12,7 @@ public:
 
 	void SetCourseByIndex(size_t index);
 	shared_ptr<Course> GetCourse() const;
+	const shared_ptr<Course> GetCourseByIndex(size_t index) const;
 
 	void AddCourse(shared_ptr<Course> course);
 	void RemoveCourse(size_t index);
@@ -22,6 +23,8 @@ public:
 
 	void SetLastPlayChapterTime(int lastPlayChapterTime);
 	int GetLastPlayChapterTime();
+
+	int GetLastPlayChapterIndex() const;
 
 	int GetLastPlayCourseIndex() const;
 

@@ -150,6 +150,8 @@ LRESULT CVideoPlayerDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /
 	//m_courseList.SetPreferences(cfg);
 
 	InsertCourses();
+
+	m_playlist.SetCourseByIndex(m_playlist.GetLastPlayCourseIndex());
 	SetCurrentCourseIndex(m_playlist.GetLastPlayCourseIndex());
 
 	m_coursePlayer.SubclassWindow(GetDlgItem(IDC_COURSE_PLAYER));
@@ -474,10 +476,10 @@ LRESULT CVideoPlayerDlg::OnCourseListSelChanged(WORD /*wNotifyCode*/, WORD /*wID
 	//if (IsCourseSelected())
 	//	return TRUE;
 
-	m_playlist.SetCourseByIndex(m_courseList.GetCurSel());
+	m_selectedCourseIndex = m_courseList.GetCurSel();
 
 	DeleteAllCourseChapters();
-	AddCourseChapters(m_playlist.GetCourse());
+	AddCourseChapters(m_playlist.GetCourseByIndex(m_selectedCourseIndex));
 
 	SetCurrentChapterIndex(m_playlist.GetSelectedCourseLastPlayChapterIndex());
 
@@ -498,7 +500,7 @@ bool CVideoPlayerDlg::IsCourseSelected() const
 
 LRESULT CVideoPlayerDlg::OnCourseChapterListSelChanged(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	m_playlist.SetCurrentChapterIndex(m_courseChapterList.GetCurSel());
+	m_selectedChapterIndex = m_courseChapterList.GetCurSel();
 	return 0;
 }
 
@@ -539,6 +541,15 @@ LRESULT CVideoPlayerDlg::OnCoursePlay(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /
 
 void CVideoPlayerDlg::Play()
 {
+	int lastPlayChapterIndex = m_playlist.GetLastPlayChapterIndex();
+	if (lastPlayChapterIndex != m_selectedChapterIndex)
+		m_playlist.SetLastPlayChapterTime(0);
+
+	m_playlist.SetCourseByIndex(m_selectedCourseIndex);
+	m_playlist.SetCurrentCourseIndex(m_selectedCourseIndex);
+	m_playlist.SetCurrentChapterIndex(m_selectedChapterIndex);
+	m_playlist.SetPlayRecord(m_selectedCourseIndex, m_selectedChapterIndex);
+
 	const Chapter& currentChapter = m_playlist.GetCurrentChapter();
 
 	tstring selectedFilename = currentChapter.GetFilePath();
@@ -552,10 +563,6 @@ void CVideoPlayerDlg::Play()
 
 		m_bmpBtnPlay.SetImages(2, -1, 3);
 		m_bmpBtnPlay.Invalidate();
-
-		m_playlist.SetPlayRecord(m_courseList.GetCurSel(), m_courseChapterList.GetCurSel());
-		//m_playlist.SetCurrentCourseIndex(m_courseList.GetCurSel());
-		//m_playlist.SetCurrentChapterIndex(m_courseChapterList.GetCurSel());
 
 		Sleep(500);
 
@@ -639,7 +646,7 @@ LRESULT CVideoPlayerDlg::OnExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndC
 LRESULT CVideoPlayerDlg::OnCoursePlayerTimeChanged(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
 	int64_t currentPlayTime = m_coursePlayer.GetTime();
-	//m_playlist.SetLastPlayChapterTime(currentPlayTime);
+	m_playlist.SetLastPlayChapterTime(currentPlayTime);
 
 	UpdatePlayTime(currentPlayTime);
 

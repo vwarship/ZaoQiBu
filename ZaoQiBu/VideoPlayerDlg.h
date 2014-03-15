@@ -182,13 +182,15 @@ private:
 
 	CImageListBoxCtrl m_courseList;
 	CImageList m_courseImageList;
-	//int m_selectCourseIndex;
+
 	CBitmapButton m_bmpBtnAddCourse;
 	CBitmapButton m_bmpBtnDeleteCourse;
 
 
 	CImageListBoxCtrl m_courseChapterList;
-	//int m_selectCourseChapterIndex;
+
+	int m_selectedCourseIndex = 0;
+	int m_selectedChapterIndex = 0;
 
 	CoursePlayer m_coursePlayer;
 
