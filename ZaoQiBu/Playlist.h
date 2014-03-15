@@ -5,115 +5,40 @@
 class Playlist
 {
 public:
-	Playlist()
-	{
-	}
+	Playlist();
 
-	void SetCourses(shared_ptr<Courses> courses)
-	{
-		m_courses = courses;
-	}
+	void SetCourses(shared_ptr<Courses> courses);
+	shared_ptr<Courses> GetCourses() const;
 
-	shared_ptr<Courses> GetCourses() const
-	{
-		return m_courses;
-	}
+	void SetCourseByIndex(size_t index);
+	shared_ptr<Course> GetCourse() const;
 
-	void SetCourseByIndex(size_t index)
-	{
-		if (index < m_courses->Count())
-		{
-			m_course = m_courses->GetCourse(index);
-			m_currentCourseIndex = index;
-		}
-	}
+	void AddCourse(shared_ptr<Course> course);
+	void RemoveCourse(size_t index);
 
-	shared_ptr<Course> GetCourse() const
-	{
-		return m_course;
-	}
+	const Chapter& GetCurrentChapter() const;
 
-	void AddCourse(shared_ptr<Course> course)
-	{
-		m_courses->AddCourse(course);
-	}
+	void SetPlayRecord(int lastPlayCourseIndex, int lastPlayChapterIndex);
 
-	void RemoveCourse(size_t index)
-	{
-		m_courses->RemoveCourse(index);
-	}
+	void SetLastPlayChapterTime(int lastPlayChapterTime);
+	int GetLastPlayChapterTime();
 
-	const Chapter& GetCurrentChapter() const
-	{
-		return m_course->GetChapter(m_currentChapterIndex);
-	}
+	int GetLastPlayCourseIndex() const;
 
-	void SetPlayRecord(int lastPlayCourseIndex, int lastPlayChapterIndex)
-	{
-		m_courses->SetLastPlayCourseIndex(lastPlayCourseIndex);
-		m_courses->GetCourse(lastPlayCourseIndex)->GetPlayRecord().SetLastPlayChapterIndex(lastPlayChapterIndex);
-	}
+	void SetVolume(int volume);
+	int GetVolume() const;
 
-	int GetLastPlayCourseIndex() const
-	{
-		return m_courses->GetLastPlayCourseIndex();
-	}
+	void SetCurrentCourseIndex(int index);
+	int GetCurrentCourseIndex() const;
 
-	void SetVolume(int volume)
-	{
-		m_courses->SetVolume(volume);
-	}
+	void SetCurrentChapterIndex(int index);
+	int GetCurrentChapterIndex() const;
 
-	int GetVolume() const
-	{
-		return m_courses->GetVolume();
-	}
+	int GetPrevChapter() const;
+	int GetNextChapter() const;
 
-	void SetCurrentCourseIndex(int index)
-	{
-		m_currentCourseIndex = index;
-	}
-
-	int GetCurrentCourseIndex() const
-	{
-		return m_currentCourseIndex;
-	}
-
-	void SetCurrentChapterIndex(int index)
-	{
-		m_currentChapterIndex = index;
-	}
-
-	int GetCurrentChapterIndex() const
-	{
-		return m_currentChapterIndex;
-	}
-
-	int GetPrevChapter() const
-	{
-		if (m_currentChapterIndex > 0 && m_course->GetChapterCount())
-			return m_currentChapterIndex - 1;
-
-		return -1;
-	}
-
-	int GetNextChapter() const
-	{
-		if (m_currentChapterIndex < static_cast<int>(m_course->GetChapterCount()) - 1)
-			return m_currentChapterIndex + 1;
-
-		return -1;
-	}
-
-	int GetSelectedCourseLastPlayChapterIndex() const
-	{
-		return m_course->GetPlayRecord().GetLastPlayChapterIndex();
-	}
-
-	int GetSelectedCourseLastPlayChapterTime() const
-	{
-		return m_course->GetPlayRecord().GetLastPlayChapterTime();
-	}
+	int GetSelectedCourseLastPlayChapterIndex() const;
+	int GetSelectedCourseLastPlayChapterTime() const;
 
 private:
 	shared_ptr<Courses> m_courses;

@@ -141,7 +141,7 @@ public:
 
 	void PlayCoursePrevChapter();
 	void PlayCourseNextChapter();
-	void UpdatePlayTime();
+	void UpdatePlayTime(int64_t currentPlayTime);
 
 private:
 	void LoadConfig();

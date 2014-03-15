@@ -210,7 +210,6 @@ void CVideoPlayerDlg::InsertCourse(const shared_ptr<Course> course, int iImage)
 	item.style = ILBS_IMGLEFT | ILBS_SELROUND;
 	item.format = DT_LEFT;
 	m_courseList.InsertItem(&item);
-
 }
 
 void CVideoPlayerDlg::AddCourseImage(LPCTSTR pszImageFilename)
@@ -324,9 +323,9 @@ void CVideoPlayerDlg::CreateBitmapButton(int nButtonID, const std::vector<int> &
 	bitmapButton.SetImages(0, -1, 1);
 }
 
-void CVideoPlayerDlg::UpdatePlayTime()
+void CVideoPlayerDlg::UpdatePlayTime(int64_t currentPlayTime)
 {
-	int64_t curPos = m_coursePlayer.GetTime() / 1000;
+	int64_t curPos = currentPlayTime / 1000;
 	int64_t mediaLength = m_coursePlayer.GetLength() / 1000;
 
 	CTimeSpan curPosTime(static_cast<time_t>(curPos));
@@ -548,9 +547,9 @@ void CVideoPlayerDlg::Play()
 		m_coursePlayer.OpenMedia(selectedFilename);
 		m_coursePlayer.Play();
 
-		Sleep(500);
+		m_coursePlayer.SetTime(m_playlist.GetLastPlayChapterTime());
+		m_coursePlayer.SetVolume(m_playlist.GetVolume());
 
-		InitMediaTimeControl();
 		m_bmpBtnPlay.SetImages(2, -1, 3);
 		m_bmpBtnPlay.Invalidate();
 
@@ -558,8 +557,9 @@ void CVideoPlayerDlg::Play()
 		//m_playlist.SetCurrentCourseIndex(m_courseList.GetCurSel());
 		//m_playlist.SetCurrentChapterIndex(m_courseChapterList.GetCurSel());
 
-		m_coursePlayer.SetTime(currentChapter.GetStartTime());
-		m_coursePlayer.SetVolume(m_playlist.GetVolume());
+		Sleep(500);
+
+		InitMediaTimeControl();
 	}
 	else
 	{
@@ -638,13 +638,16 @@ LRESULT CVideoPlayerDlg::OnExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndC
 
 LRESULT CVideoPlayerDlg::OnCoursePlayerTimeChanged(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
-	UpdatePlayTime();
+	int64_t currentPlayTime = m_coursePlayer.GetTime();
+	//m_playlist.SetLastPlayChapterTime(currentPlayTime);
+
+	UpdatePlayTime(currentPlayTime);
 
 	const Chapter& currentChapter = m_playlist.GetCurrentChapter();
 	if ( m_coursePlayer.IsEnded() ||
-		(currentChapter.GetEndTime()>0 && m_coursePlayer.GetTime() >= currentChapter.GetEndTime()) )	//如果设置了结束标记
+		(currentChapter.GetEndTime()>0 && currentPlayTime >= currentChapter.GetEndTime()))	//如果设置了结束标记
 	{
-		//m_coursePlayer.Stop();
+		m_coursePlayer.Stop();
 		PlayCourseNextChapter();
 	}
 
