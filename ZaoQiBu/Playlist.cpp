@@ -101,6 +101,16 @@ int Playlist::GetVolume() const
 	return m_courses->GetVolume();
 }
 
+void Playlist::SetTimeLimit(int timeLimit)
+{
+	m_courses->SetTimeLimit(timeLimit);
+}
+
+int Playlist::GetTimeLimit() const
+{
+	return m_courses->GetTimeLimit();
+}
+
 void Playlist::SetCurrentCourseIndex(int index)
 {
 	m_currentCourseIndex = index;

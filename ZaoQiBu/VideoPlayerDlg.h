@@ -218,5 +218,7 @@ private:
 	Config m_config;
 	Playlist m_playlist;
 
+	time_t m_startTime;
+
 };
 

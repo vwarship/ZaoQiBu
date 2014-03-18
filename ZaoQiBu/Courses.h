@@ -48,10 +48,21 @@ public:
 		return m_volume;
 	}
 
+	void SetTimeLimit(int timeLimit)
+	{
+		m_timeLimit = timeLimit;
+	}
+
+	int GetTimeLimit() const
+	{
+		return m_timeLimit;
+	}
+
 private:
 	std::vector<shared_ptr<Course>> m_courses;
 
 	int m_lastPlayCourseIndex = 0;
 	int m_volume = 100;
+	int m_timeLimit = 20;
 
 };

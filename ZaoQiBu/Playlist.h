@@ -31,6 +31,9 @@ public:
 	void SetVolume(int volume);
 	int GetVolume() const;
 
+	void SetTimeLimit(int timeLimit);
+	int GetTimeLimit() const;
+
 	void SetCurrentCourseIndex(int index);
 	int GetCurrentCourseIndex() const;
 

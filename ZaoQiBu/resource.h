@@ -3,6 +3,7 @@
 // π© ZaoQiBu.rc  π”√
 //
 #define IDD_ABOUTBOX                    100
+#define IDD_SETTINGBOX                    101
 #define IDR_MAINFRAME                   128
 #define IDD_VIDEOPLAYER                 201
 #define IDB_LOGO                        202

@@ -38,6 +38,7 @@ bool Config::Load()
 		xpath_node node = xml_doc.select_single_node(_T("/ZaoQiBu/Courses"));
 		m_courses->SetLastPlayCourseIndex(node.node().attribute(_T("lastPlayCourseIndex")).as_int());
 		m_courses->SetVolume(node.node().attribute(_T("volume")).as_int());
+		m_courses->SetTimeLimit(node.node().attribute(_T("timeLimit")).as_int());
 
 		xpath_node_set node_set = xml_doc.select_nodes(_T("/ZaoQiBu/Courses/Course"));
 
@@ -83,6 +84,9 @@ void Config::Save()
 
 	coursesAttr = coursesNode.append_attribute(_T("volume"));
 	coursesAttr.set_value(m_courses->GetVolume());
+
+	coursesAttr = coursesNode.append_attribute(_T("timeLimit"));
+	coursesAttr.set_value(m_courses->GetTimeLimit());
 
 	for (size_t i = 0; i < m_courses->Count(); ++i)
 	{

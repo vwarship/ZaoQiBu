@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "VideoPlayerDlg.h"
 #include "CourseUtil.h"
-#include "aboutdlg.h"
+#include "AboutDlg.h"
+#include "SettingDlg.h"
 
 CVideoPlayerDlg::CVideoPlayerDlg()
 : m_isFullScreen(false)
@@ -506,6 +507,8 @@ LRESULT CVideoPlayerDlg::OnCourseChapterListSelChanged(WORD /*wNotifyCode*/, WOR
 
 LRESULT CVideoPlayerDlg::OnCourseChapterListDoubleClicked(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
+	m_startTime = time(NULL);
+
 	Play();
 	return 0;
 }
@@ -520,6 +523,8 @@ LRESULT CVideoPlayerDlg::OnCoursePrevChapter(WORD /*wNotifyCode*/, WORD /*wID*/,
 LRESULT CVideoPlayerDlg::OnCoursePlay(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
 	UIEnable(IDC_COURSE_PLAY, !m_bmpBtnPlay.IsWindowEnabled());
+
+	m_startTime = time(NULL);
 
 	if (m_coursePlayer.IsNotOpen())
 	{
@@ -541,6 +546,7 @@ LRESULT CVideoPlayerDlg::OnCoursePlay(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /
 
 void CVideoPlayerDlg::Play()
 {
+	//判断是否还是从上一次播放的章节开始，不是就应该从头开始播放。
 	int lastPlayChapterIndex = m_playlist.GetLastPlayChapterIndex();
 	if (lastPlayChapterIndex != m_selectedChapterIndex)
 		m_playlist.SetLastPlayChapterTime(0);
@@ -651,11 +657,27 @@ LRESULT CVideoPlayerDlg::OnCoursePlayerTimeChanged(UINT /*uMsg*/, WPARAM /*wPara
 	UpdatePlayTime(currentPlayTime);
 
 	const Chapter& currentChapter = m_playlist.GetCurrentChapter();
+	const int64_t currentChapterEndTime = currentChapter.GetEndTime();
 	if ( m_coursePlayer.IsEnded() ||
-		(currentChapter.GetEndTime()>0 && currentPlayTime >= currentChapter.GetEndTime()))	//如果设置了结束标记
+		(currentChapterEndTime>0 && currentPlayTime >= currentChapterEndTime))	//如果设置了结束标记
 	{
 		m_coursePlayer.Stop();
 		PlayCourseNextChapter();
+	}
+
+	//int64_t courseLength = m_coursePlayer.GetLength();
+	//int64_t courseEndTime = courseLength;
+	//if (currentChapterEndTime > 0 && currentChapterEndTime < courseLength)
+	//	courseEndTime = currentChapterEndTime;
+	//int64_t currentChapterRemainTime = courseEndTime - currentPlayTime;
+
+	time_t currentTime = time(NULL);
+	int timeLimit = m_playlist.GetTimeLimit() * 60;
+	if ( timeLimit > 0 && 
+		(currentTime - m_startTime) > timeLimit)
+	{
+		SendMessage(WM_COMMAND, MAKEWPARAM(IDC_COURSE_PLAY, BN_CLICKED), 0);
+		m_bmpBtnPlay.Invalidate();
 	}
 
 	return TRUE;
