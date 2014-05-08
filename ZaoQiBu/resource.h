@@ -3,7 +3,7 @@
 // π© ZaoQiBu.rc  π”√
 //
 #define IDD_ABOUTBOX                    100
-#define IDD_SETTINGBOX                    101
+#define IDD_SETTINGBOX                  101
 #define IDR_MAINFRAME                   128
 #define IDD_VIDEOPLAYER                 201
 #define IDB_LOGO                        202
@@ -43,6 +43,9 @@
 #define IDC_TITLE                       1021
 #define IDC_SOURCE_CODE                 1023
 #define IDC_SOURCE_CODE_LINK            1023
+#define IDC_DOWNLOAD_360_LINK           1024
+#define IDC_SOURCE_CODE_LINK3           1025
+#define IDC_DOWNLOAD_BAIDU_LINK         1025
 
 // Next default values for new objects
 // 
