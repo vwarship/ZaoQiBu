@@ -1,4 +1,4 @@
-# <img src="./ZaoQiBu/res/ZaoQiBu.ico" width="144" alt="pageres">早起步-动画片播放器
+# <img src="logo.png" alt="pageres">早起步-动画片播放器
 
 ##介绍
 ###主要目标是想让儿童可以以最好的体验来看动画片。
