@@ -16,5 +16,5 @@
 ![](./snapshots/then_play.jpg)
 
 ## 关于
-提供了功能的快捷键和已经整理好的动画片资源。
+* 提供了功能的快捷键和已经整理好的动画片资源。
 ![](./snapshots/about.jpg)
